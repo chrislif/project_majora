@@ -3,7 +3,8 @@
 -- main.lua
 --
 -----------------------------------------------------------------------------------------
-local script = require(".bscr")
+local bscript = require(".bscr")
+local uscript = require(".untscr")
 
 -- Initialize Variables
 local gameLoopTimer
@@ -54,7 +55,7 @@ end
 background:addEventListener("touch", dragBackground)
 
 local function gameLoop()	-- Main Game Loop
-
+	
 end
 
 gameLoopTimer = timer.performWithDelay(5, gameLoop, -1)
