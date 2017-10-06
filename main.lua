@@ -35,10 +35,15 @@ local function dragBackground(event)	-- Move background on drag
 		background.touchOffsetX = event.x - background.x
 		background.touchOffsetY = event.y - background.y
 		
-	elseif ("moved" == phase) then	
-		background.x = event.x - background.touchOffsetX
-		background.y = event.y - background.touchOffsetY
-		
+	elseif ("moved" == phase) then
+		local xmovcalc = event.x - background.touchOffsetX
+		if ((xmovcalc <= background.contentWidth/2) and (xmovcalc >= 0))then
+			background.x = xmovcalc
+		end
+		local ymovcalc = event.y - background.touchOffsetY
+		if ((ymovcalc <= background.contentHeight/2) and (ymovcalc >= 0)) then
+			background.y = ymovcalc
+		end
 	elseif ("ended" == phase) then
 		display.currentStage:setFocus(nil)
 	end
