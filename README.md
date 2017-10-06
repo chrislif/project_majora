@@ -1,6 +1,7 @@
 	-- Project Majora --
 
 Creator: Christopher Lif
+
 Start Date: 2017/10/06
 
 This small project is the first game that I will try to take to completion.
