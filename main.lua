@@ -10,42 +10,63 @@ local uscript = require(".untscr")
 local gameLoopTimer
 
 -- Create Display Groups
-local backGroup = display.newGroup()
-local unitGroup = display.newGroup()
+local objectTable = {}
+local backGroup  = display.newGroup()
+local unitGroup  = display.newGroup()
 local buildGroup = display.newGroup()
 
 -- Load Background
 local background = display.newImageRect(backGroup, "assets/background.png", 800, 1400)
 background.x = display.contentCenterX
 background.y = display.contentCenterY
+table.insert(objectTable, background)
 
-local function updatePositions()	-- Update position of objects
-	-- STUB
+local function setTouchOffsets(event)
+	for i, obj in pairs(objectTable) do
+		obj.touchOffsetX = event.x - obj.x
+		obj.touchOffsetY = event.y - obj.y
+	end
+end
+
+local function updatePositions(event, xmov, ymov)	-- Update position of objects
+	for i, obj in pairs(objectTable) do
+		local xmov = event.x - obj.touchOffsetX
+		local ymov = event.y - obj.touchOffsetY
+		obj.x = xmov
+		obj.y = ymov
+	end
 end
 
 local function updateDisplay()	--	Update display with new positions
 	-- STUB
 end
 
+-- Temp function to spawn on tap
+local function tapBuild(event)
+	local newBuild = uscript.spawnBuilding(event.x, event.y, "red", buildGroup)
+	table.insert(objectTable, newBuild)
+end
+
+background:addEventListener("tap", tapBuild)
+
 local function dragBackground(event)	-- Move background on drag
 	local background = event.target
 	local phase = event.phase
 	
-	if ("began" == phase) then
+	if "began" == phase then
 		display.currentStage:setFocus(background)
-		background.touchOffsetX = event.x - background.x
-		background.touchOffsetY = event.y - background.y
+		setTouchOffsets(event)
 		
-	elseif ("moved" == phase) then
-		local xmovcalc = event.x - background.touchOffsetX
-		if ((xmovcalc <= background.contentWidth/2) and (xmovcalc >= 0))then
-			background.x = xmovcalc
+	elseif "moved" == phase then
+		local xmovcheck = event.x - background.touchOffsetX
+		local ymovcheck = event.y - background.touchOffsetY
+		if xmovcheck <= background.contentWidth/2  and xmovcheck >= 0 and
+		   ymovcheck <= background.contentHeight/2 and ymovcheck >= 0 then
+				updatePositions(event)
 		end
-		local ymovcalc = event.y - background.touchOffsetY
-		if ((ymovcalc <= background.contentHeight/2) and (ymovcalc >= 0)) then
-			background.y = ymovcalc
-		end
-	elseif ("ended" == phase) then
+		
+		
+	elseif "ended" == phase then
 		display.currentStage:setFocus(nil)
 	end
 	

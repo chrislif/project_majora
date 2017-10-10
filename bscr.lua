@@ -3,9 +3,9 @@
 -- bscr.lua
 -- collection of basic scripts
 -----------------------------------------------------------------------------------------
-local script = {}
+local bscript = {}
 
-function script.sign(i)	-- Find the sign of an integer
+function bscript.sign(i)	-- Find the sign of an integer
 	if i > 0 then
 		return 1
 	elseif i < 0 then
@@ -15,10 +15,4 @@ function script.sign(i)	-- Find the sign of an integer
 	end
 end
 
-function script.tablelength(T)	-- Get length of a table
-  local count = 0
-  for _ in pairs(T) do count = count + 1 end
-  return count
-end
-
-return script
+return bscript
