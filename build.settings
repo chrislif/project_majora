@@ -20,7 +20,7 @@ settings =
 	{
 		usesPermissions =
 		{
-			"android.permission.INTERNET",
+		
 		},
 	},
 
@@ -53,7 +53,7 @@ settings =
 	--
 	plugins =
 	{
-
+	
 	},
 
 	--

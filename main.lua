@@ -3,8 +3,8 @@
 -- main.lua
 --
 -----------------------------------------------------------------------------------------
-local bscript = require(".scripts.bscr")
-local uscript = require(".scripts.untscr")
+local bscript = require("bscr")
+local uscript = require("untscr")
 
 -- Initialize Variables
 local gameLoopTimer
@@ -60,11 +60,7 @@ local function dragBackground(event)	-- Move background on drag
 	elseif "moved" == phase then
 		local xmovcheck = event.x - background.touchOffsetX
 		local ymovcheck = event.y - background.touchOffsetY
-		if xmovcheck <= background.contentWidth/2  and xmovcheck >= 0 and
-		   ymovcheck <= background.contentHeight/2 and ymovcheck >= 0 then
-				updatePositions(event)
-		end
-		
+		updatePositions(event)		
 		
 	elseif "ended" == phase then
 		display.currentStage:setFocus(nil)
