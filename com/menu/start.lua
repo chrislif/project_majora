@@ -19,7 +19,7 @@ button.x = display.contentCenterX
 button.y = display.contentCenterY
 
 local function startGame(event)
-	composer.gotoScene("game")
+	composer.gotoScene("scenes.game")
 	background:removeSelf()
 	button:removeSelf()
 	composer.removeScene("start")
