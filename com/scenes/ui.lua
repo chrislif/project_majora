@@ -36,7 +36,6 @@ function ui.loadUI()
 end
 
 function ui.showBuildMenu()
-	print(1)
 	local menuTable = {}
 	local menushelf = display.newImageRect("assets/buildmenushelf.png", 300, 40)
 	menushelf.x = menushelf.contentWidth/2 + 25
@@ -44,6 +43,14 @@ function ui.showBuildMenu()
 	menushelf.name = "buildmenu"
 	
 	menuTable["menushelf"] = menushelf
+	
+	local buildbarracks = display.newImageRect(spriteTable["barracks"], 1, 25, 25)
+	buildbarracks.x = menushelf.contentWidth/2 + 25
+	buildbarracks.y = display.contentHeight - 25
+	buildbarracks.name = "buildmenu"
+	
+	menuTable["buildbarracks"] = buildbarracks
+	
 	return menuTable
 end
 
@@ -52,7 +59,6 @@ function ui.transitionBuildMenu()
 end
 
 function ui.hideBuildMenu(menuTable)
-	print(2)
 	for i, menu in pairs(menuTable) do
 		if menu ~= nil then
 			menu:removeSelf()

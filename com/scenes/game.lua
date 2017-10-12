@@ -33,16 +33,16 @@ table.insert(objectTable, background)
 
 local function setTouchOffsets(event)	-- Set offsets for screen movement
 	for i, obj in pairs(objectTable) do	-- Loop through object table
-		if obj ~= nil then
-		obj.touchOffsetX = event.x - obj.x
-		obj.touchOffsetY = event.y - obj.y
+		if obj.name ~= "buildmenu" and obj ~= nil then
+			obj.touchOffsetX = event.x - obj.x
+			obj.touchOffsetY = event.y - obj.y
 		end
 	end
 end
 
 local function updatePositions(event, xmov, ymov)	-- Update position of objects
 	for i, obj in pairs(objectTable) do
-		if obj.name ~= "buildmenu" then
+		if obj.name ~= "buildmenu" and obj ~= nil then
 			local xmov = event.x - obj.touchOffsetX
 			local ymov = event.y - obj.touchOffsetY
 			obj.x = xmov
@@ -73,13 +73,12 @@ local function selectObject(event)	-- Function to select objects
 					return
 				end
 			else
-				if obj.selected == true then
+				if obj.selected == true then			
 					uscript.deselectFunctions(obj, menuTable)
 				end
 			end
 		end 
 	end
-	
 end
 
 Runtime:addEventListener("tap", selectObject)
