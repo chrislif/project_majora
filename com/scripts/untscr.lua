@@ -3,10 +3,15 @@
 -- untscr.lua
 -- collection of all unit based scripts
 -----------------------------------------------------------------------------------------
+local sprites = require "scripts.sprite"
+
 local uscript = {}
+local spriteTable = sprites.loadSprites()
 
 function uscript.spawnBuilding(x, y, building, dgroup, objectTable)	-- Spawn Building
-	local newBuild = display.newImageRect(dgroup, "assets/".. building ..".png", 100, 100)
+	local newBuild = display.newSprite(dgroup, spriteTable[building], spriteTable[building.."Data"])
+	newBuild.xScale = 0.5
+	newBuild.yScale = 0.5
 	newBuild.x = x
 	newBuild.y = y
 	newBuild.name = building

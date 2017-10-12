@@ -5,15 +5,12 @@
 -----------------------------------------------------------------------------------------
 -- Requires
 local bscript = require "scripts.bscr"
-local uscript = require "scripts.untscr" 
+local uscript = require "scripts.untscr"
 local composer = require "composer"
 
 -- Initialize Scene
 local scene = composer.newScene()
 local gameLoopTimer
-local isBuilding = false
-local willBuild = nil
-local menu = nil
 
 -- Create Display Groups
 local objectTable = {}
@@ -49,10 +46,6 @@ local function updatePositions(event, xmov, ymov)	-- Update position of objects
 end
 
 local function selectObject(event)	-- Function to select objects
-	if isBuilding == true then return end
-	
-	local castleChecked = false
-	
 	for i, obj in pairs(objectTable) do	-- Check if object is tapped on
 		if obj ~= nil and obj.name ~= "background" then
 			local xmin = obj.x - obj.contentWidth/2
@@ -65,10 +58,10 @@ local function selectObject(event)	-- Function to select objects
 			
 			
 			if xcheck and ycheck then
-				
-				
+				print(1)
+				obj:setSequence("selected")
 			else
-				
+				obj:setSequence("normal")
 			end
 		end 
 	end
