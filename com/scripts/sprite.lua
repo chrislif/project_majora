@@ -84,6 +84,44 @@ function sprites:loadSprites()
 	spriteSheetTable["barracks"] = barracksSheet
 	spriteSheetTable["barracksData"] = barracksSequenceData
 	
+		-- Build Menu Data
+		----------------------------------------------------------------------------------
+	local buildmenuOptions =	
+	{
+		frames =
+		{
+		  { -- 1) buildmenu normal
+			x = 0,
+			y = 0,
+			width = 100,
+			height = 100
+		  },
+		  { -- 2) buildmenu selected
+			x = 0,
+			y = 100,
+			width = 100,
+			height = 100
+		  },
+		},
+	}
+	local buildmenuSheet = graphics.newImageSheet("assets/buildmenu.png", buildmenuOptions)
+	
+	local buildmenuSequenceData =
+	{
+		{
+		name = "normal",
+		start = 1,
+		count = 1,
+		},
+		{
+		name = "selected",
+		start = 2,
+		count = 1,
+		}
+	}
+	spriteSheetTable["buildmenu"] = buildmenuSheet
+	spriteSheetTable["buildmenuData"] = buildmenuSequenceData
+		
 		-- Return Data
 		----------------------------------------------------------------------------------
 	return spriteSheetTable

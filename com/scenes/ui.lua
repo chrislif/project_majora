@@ -3,7 +3,10 @@
 -- ui.lua
 -- main ui functions
 -----------------------------------------------------------------------------------------
+local sprites = require "scripts.sprite"
+
 local ui = {}
+local spriteTable = sprites.loadSprites()
 
 function ui.loadUI()
 	local menuTable = {}
@@ -19,9 +22,12 @@ function ui.loadUI()
 	
 	menuTable["goldui"] = goldtext
 	
-	local buildui = display.newImageRect("assets/buildmenu.png", 40, 40)
+	local buildui = display.newSprite(spriteTable["buildmenu"], spriteTable["buildmenuData"])
+	buildui.xScale = .4
+	buildui.yScale = .4
 	buildui.x = buildui.contentWidth/2
 	buildui.y = display.contentHeight - 25
+	buildui.selected = false
 	buildui.name = "buildmenu"
 	
 	menuTable["buildmenu"] = buildui

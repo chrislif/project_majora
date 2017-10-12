@@ -60,19 +60,20 @@ local function selectObject(event)	-- Function to select objects
 			
 			local xcheck = event.x > xmin and event.x < xmax
 			local ycheck = event.y > ymin and event.y < ymax
+			print("object: " .. obj.name)
+			print("xmin: " .. xmin .. ", xmax: " .. xmax)
+			print("ymin: " .. ymin .. ", ymax: " .. ymax)
+			print("eventx: " .. event.x .. ", eventy: " .. event.y)
+			
 			
 			if xcheck and ycheck then
 				if obj.selected == false then
-					obj:setSequence("selected")
-					obj.selected = true
 					uscript.selectFunctions(obj)
 					return
 				end
 			else
 				if obj.selected == true then
-					obj:setSequence("normal")
 					uscript.deselectFunctions(obj)
-					obj.selected = false
 				end
 			end
 		end 

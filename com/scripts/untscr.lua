@@ -26,15 +26,18 @@ function uscript.spawnUnit(x, y, unit, dgroup)	-- Spawn Unit
 end
 
 function uscript.selectFunctions(obj)	-- Checks building and runs function on selection
-	
-	
+	obj:setSequence("selected")
+	obj.selected = true
 	if obj.name == "castle" then
 		
+	elseif obj.name == "buildmenu" then
+		print(1)
 	end
 end
 
 function uscript.deselectFunctions(obj)
-	
+	obj:setSequence("normal")
+	obj.selected = false
 
 end
 
