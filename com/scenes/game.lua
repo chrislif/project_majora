@@ -56,12 +56,19 @@ local function selectObject(event)	-- Function to select objects
 			local xcheck = event.x > xmin and event.x < xmax
 			local ycheck = event.y > ymin and event.y < ymax
 			
-			
 			if xcheck and ycheck then
-				print(1)
-				obj:setSequence("selected")
+				if obj.selected == false then
+					obj:setSequence("selected")
+					obj.selected = true
+					print(obj.name.." selected")
+					return
+				end
 			else
-				obj:setSequence("normal")
+				if obj.selected == true then
+					obj:setSequence("normal")
+					obj.selected = false
+					print(obj.name.." deselcted")
+				end
 			end
 		end 
 	end
