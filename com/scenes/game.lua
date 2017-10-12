@@ -14,6 +14,7 @@ gold = 0
 local scene = composer.newScene()
 local gameLoopTimer
 local objectTable = {}
+local goldui
 
 -- Create Display Groups
 local backGroup  = display.newGroup()
@@ -103,16 +104,17 @@ end
 
 background:addEventListener("touch", dragBackground)
 
-local function gameLoop()	-- Main Game Loop
-	
-end
-
 function scene:create(event)	-- Runs on scene creation but before on screen
 	local castle = uscript.spawnBuilding(display.contentCenterX, display.contentCenterY, 
 										 "castle", buildGroup, 0.5)
 	table.insert(objectTable, castle)
-	local ui = ui.loadUI()
-	table.insert(objectTable, ui)
+	local uiTable = ui.loadUI()
+	table.insert(objectTable, uiTable["buildmenu"])
+	goldui = uiTable["goldui"]
+end
+
+local function gameLoop()	-- Main Game Loop
+	ui.updateUI(goldui)
 end
 
 function scene:show(event)	-- Runs when scene is on screen
