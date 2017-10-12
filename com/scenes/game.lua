@@ -11,7 +11,10 @@ local composer = require "composer"
 local scene = composer.newScene()
 local gameLoopTimer
 local menuActive = false
+local isBuilding = false
+local willBuild = nil
 local menu = nil
+
 
 -- Create Display Groups
 local objectTable = {}
@@ -26,6 +29,7 @@ background.x = display.contentCenterX
 background.y = display.contentCenterY
 background.name = "background"
 table.insert(objectTable, background)
+
 
 local function setTouchOffsets(event)	-- Set offsets for screen movement
 	for i, obj in pairs(objectTable) do
@@ -45,6 +49,18 @@ local function updatePositions(event, xmov, ymov)	-- Update position of objects
 	end
 end
 
+local function buildObject(event)
+	if isBuilding == false then return end
+	if willBuild ~= nil then
+		local newBuild = uscript.spawnBuilding(event.x, event.y, willBuild, buildGroup)
+		table.insert(objectTable, newBuild)
+		isBuilding = false
+		willBuild = nil
+	end
+end
+
+Runtime:addEventListener("tap", buildObject)
+
 local function checkMenu(event)
 	local xcheck = false
 	local ycheck = false
@@ -58,9 +74,8 @@ local function checkMenu(event)
 		ycheck = event.y > ymin and event.y < ymax
 	end
 	if xcheck and ycheck then
-		
-	
-	
+		willBuild = "red"
+		isBuilding = true
 	else
 		menuActive = false
 		if menu ~= nil then
@@ -73,6 +88,7 @@ end
 local function showMenu(event, obj)
 	menuActive = true
 	if menu ~= nil then
+		print(1)
 		menu:removeSelf()
 	end
 	menu = display.newImageRect(menuGroup, "assets/red.png", 50, 50)
@@ -81,9 +97,10 @@ local function showMenu(event, obj)
 end
 
 local function selectObject(event)	-- Function to select objects
-
+	if isBuilding == true then return end
 	for i, obj in pairs(objectTable) do	-- Check if object is tapped on
 		if obj ~= nil and obj.name ~= "background" then
+			print(obj.name)
 			local xmin = obj.x - obj.contentWidth/2
 			local xmax = obj.x + obj.contentWidth/2
 			local ymin = obj.y - obj.contentHeight/2
@@ -91,13 +108,23 @@ local function selectObject(event)	-- Function to select objects
 			
 			local xcheck = event.x > xmin and event.x < xmax
 			local ycheck = event.y > ymin and event.y < ymax
+			print("xmin: "..xmin..", xmax: "..xmax)
+			print("ymin: "..ymin..", ymax: "..ymax)
+			print("event.x: "..event.x..", event.y: "..event.y)
 			if xcheck and ycheck then
 				if obj.selected == false then
+					print(obj.name.." selected")
 					obj.selected = true
+					if obj.name == "castle" then
+						showMenu(event, obj)
+						return
+					end
+					return
 				end
-				showMenu(event, obj)
+				
 			else
 				if obj.selected == true then
+					print(obj.name.." deselected")
 					obj.selected = false
 				end
 				checkMenu(event)
