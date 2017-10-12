@@ -6,14 +6,16 @@
 -- Requires
 local bscript = require "scripts.bscr"
 local uscript = require "scripts.untscr"
+local ui = require "scenes.ui"
 local composer = require "composer"
 
 -- Initialize Scene
+gold = 0
 local scene = composer.newScene()
 local gameLoopTimer
+local objectTable = {}
 
 -- Create Display Groups
-local objectTable = {}
 local backGroup  = display.newGroup()
 local unitGroup  = display.newGroup()
 local buildGroup = display.newGroup()
@@ -38,10 +40,12 @@ end
 
 local function updatePositions(event, xmov, ymov)	-- Update position of objects
 	for i, obj in pairs(objectTable) do
-		local xmov = event.x - obj.touchOffsetX
-		local ymov = event.y - obj.touchOffsetY
-		obj.x = xmov
-		obj.y = ymov
+		if (obj.name ~= "buildmenu") then
+			local xmov = event.x - obj.touchOffsetX
+			local ymov = event.y - obj.touchOffsetY
+			obj.x = xmov
+			obj.y = ymov
+		end
 	end
 end
 
@@ -60,14 +64,14 @@ local function selectObject(event)	-- Function to select objects
 				if obj.selected == false then
 					obj:setSequence("selected")
 					obj.selected = true
-					print(obj.name.." selected")
+					uscript.selectFunctions(obj)
 					return
 				end
 			else
 				if obj.selected == true then
 					obj:setSequence("normal")
+					uscript.deselectFunctions(obj)
 					obj.selected = false
-					print(obj.name.." deselcted")
 				end
 			end
 		end 
@@ -104,8 +108,11 @@ local function gameLoop()	-- Main Game Loop
 end
 
 function scene:create(event)	-- Runs on scene creation but before on screen
-	local castle = uscript.spawnBuilding(display.contentCenterX, display.contentCenterY, "castle", buildGroup, objectTable)
+	local castle = uscript.spawnBuilding(display.contentCenterX, display.contentCenterY, 
+										 "castle", buildGroup, 0.5)
 	table.insert(objectTable, castle)
+	local ui = ui.loadUI()
+	table.insert(objectTable, ui)
 end
 
 function scene:show(event)	-- Runs when scene is on screen
