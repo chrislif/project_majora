@@ -1,9 +1,10 @@
 -----------------------------------------------------------------------------------------
 --
 -- untscr.lua
--- collection of all unit based scripts
+-- collection of all object based scripts
 -----------------------------------------------------------------------------------------
 local sprites = require "scripts.sprite"
+local ui = require "scenes.ui"
 
 local uscript = {}
 local spriteTable = sprites.loadSprites()
@@ -31,14 +32,17 @@ function uscript.selectFunctions(obj)	-- Checks building and runs function on se
 	if obj.name == "castle" then
 		
 	elseif obj.name == "buildmenu" then
-		print(1)
+		return ui.showBuildMenu()
+	
 	end
 end
 
-function uscript.deselectFunctions(obj)
+function uscript.deselectFunctions(obj, menuTable)
 	obj:setSequence("normal")
 	obj.selected = false
-
+	if obj.name == "buildmenu" then
+		ui.hideBuildMenu(menuTable)
+	end
 end
 
 return uscript

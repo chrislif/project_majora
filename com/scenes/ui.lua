@@ -35,9 +35,35 @@ function ui.loadUI()
 	return menuTable
 end
 
+function ui.showBuildMenu()
+	print(1)
+	local menuTable = {}
+	local menushelf = display.newImageRect("assets/buildmenushelf.png", 300, 40)
+	menushelf.x = menushelf.contentWidth/2 + 25
+	menushelf.y = display.contentHeight - 25
+	menushelf.name = "buildmenu"
+	
+	menuTable["menushelf"] = menushelf
+	return menuTable
+end
+
+function ui.transitionBuildMenu()
+
+end
+
+function ui.hideBuildMenu(menuTable)
+	print(2)
+	for i, menu in pairs(menuTable) do
+		if menu ~= nil then
+			menu:removeSelf()
+		end
+	end
+end
+
 function ui.updateUI(goldui)
 	goldui.text = tostring(gold)
 
+	
 end
 
 return ui
