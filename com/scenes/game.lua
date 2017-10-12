@@ -17,7 +17,6 @@ local menu = nil
 
 -- Create Display Groups
 local objectTable = {}
-local menuTable = {}
 local backGroup  = display.newGroup()
 local unitGroup  = display.newGroup()
 local buildGroup = display.newGroup()
@@ -49,61 +48,6 @@ local function updatePositions(event, xmov, ymov)	-- Update position of objects
 	end
 end
 
-local function buildObject(event)	-- Will Build an Object
-	if isBuilding == false then return end
-	if willBuild ~= nil then
-		local newBuild = uscript.spawnBuilding(event.x, event.y, willBuild, buildGroup)
-		table.insert(objectTable, newBuild)
-		isBuilding = false
-		willBuild = nil
-	end
-end
-
-Runtime:addEventListener("tap", buildObject)
-
-local function checkMenu(event)	-- Will check if the menu is tapped and then react
-	local xcheck = false
-	local ycheck = false
-	if table.maxn(menuTable) > 0 then
-		
-	end
-	local xmin = menu.x - menu.contentWidth/2
-	local xmax = menu.x + menu.contentWidth/2
-	local ymin = menu.y - menu.contentHeight/2
-	local ymax = menu.y + menu.contentHeight/2
-	
-	xcheck = event.x > xmin and event.x < xmax
-	ycheck = event.y > ymin and event.y < ymax
-	if xcheck and ycheck then
-		willBuild = "red"
-		isBuilding = true
-	else
-		if menu ~= nil then
-			menu:removeSelf()
-		end
-		menu = nil
-	end
-end
-
-local function showMenu(event, obj)	-- Will show the menu
-	menuActive = true
-	if table.maxn(menuTable) > 0 then
-		for i, obj in pairs(menuTable) do
-			menuTable[i] = nil
-			obj:removeSelf()
-		end
-	end
-	menuTable["red"] = display.newImageRect(menuGroup, "assets/red.png", 50, 50)
-	menuTable["yellow"] = display.newImageRect(menuGroup, "assets/yellow.png", 50, 50)
-	
-	local count = 0
-	for i, obj in pairs(menuTable) do
-		obj.x = obj.contentWidth/2
-		obj.y = (obj.contentHeight * (2 + count))
-		count = count + 1
-	end
-end
-
 local function selectObject(event)	-- Function to select objects
 	if isBuilding == true then return end
 	
@@ -118,30 +62,13 @@ local function selectObject(event)	-- Function to select objects
 			
 			local xcheck = event.x > xmin and event.x < xmax
 			local ycheck = event.y > ymin and event.y < ymax
-			-- print("xmin: "..xmin..", xmax: "..xmax)
-			-- print("ymin: "..ymin..", ymax: "..ymax)
-			-- print("event.x: "..event.x..", event.y: "..event.y)
 			
-			if obj.name == "castle" then
-				castleChecked = true
-			end
 			
 			if xcheck and ycheck then
-				if obj.selected == false then
-					obj.selected = true
-					if obj.name == "castle" then
-						showMenu(event, obj)
-						return
-					end
-				end
+				
 				
 			else
-				if obj.selected == true then
-					obj.selected = false
-				end
-				if obj.name == "castle" then
-					checkMenu(event)
-				end
+				
 			end
 		end 
 	end
