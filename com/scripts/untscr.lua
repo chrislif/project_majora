@@ -35,6 +35,7 @@ function uscript.selectFunctions(obj)	-- Checks building and runs function on se
 		return ui.showBuildMenu()
 	
 	end
+	print(obj.name)
 end
 
 function uscript.deselectFunctions(obj, menuTable)
@@ -43,6 +44,7 @@ function uscript.deselectFunctions(obj, menuTable)
 	if obj.name == "buildmenu" then
 		ui.hideBuildMenu(menuTable)
 	end
+	return nil
 end
 
 return uscript

@@ -53,7 +53,9 @@ end
 
 local function deselectMenu()
 	for i, menuobj in pairs(menuTable) do
-		
+		if menuobj.name ~= "buildshelf" then
+			uscript.deselectFunctions(menuobj, menuTable)
+		end
 	end
 end
 
@@ -69,9 +71,11 @@ local function selectMenu(event)
 			local ycheck = event.y > ymin and event.y < ymax
 			
 			if xcheck and ycheck then
-				print(menuobj.name)
 				if menuobj.name ~= "buildshelf" then
 					uscript.selectFunctions(menuobj)
+					return true
+				else
+					deselectMenu()
 					return true
 				end
 			end
@@ -97,19 +101,25 @@ local function selectObject(event)	-- Function to select objects
 			
 			
 			if xcheck and ycheck then
+				if obj.name == "buildmenu" then
+					if obj.selected == false then
+						menuTable = uscript.selectFunctions(obj)
+					else
+						menuTable = uscript.deselectFunctions(obj, menuTable)
+					end
+					return
+				end
 				if obj.selected == false then
 					menuTable = uscript.selectFunctions(obj)
 					return
 				end
 			else
-				if obj.selected == true then
-					if obj.name == "buildmenu" then
-						if selectMenu(event) == false then
-							uscript.deselectFunctions(obj, menuTable)
-						end
-					else
-						uscript.deselectFunctions(obj, menuTable)
+				if obj.name == "buildmenu" then
+					if selectMenu(event) == false then
+						menuTable = uscript.deselectFunctions(obj, menuTable)
 					end
+				elseif obj.selected == true then
+					menuTable = uscript.deselectFunctions(obj, menuTable)
 				end
 			end
 		end 

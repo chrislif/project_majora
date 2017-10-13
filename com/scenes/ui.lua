@@ -62,9 +62,11 @@ function ui.transitionBuildMenu()
 end
 
 function ui.hideBuildMenu(menuTable)
-	for i, menu in pairs(menuTable) do
-		if menu ~= nil then
-			menu:removeSelf()
+	if menuTable ~= nil then
+		for i, menu in pairs(menuTable) do
+			if menu ~= nil then
+				menu:removeSelf()
+			end
 		end
 	end
 end
