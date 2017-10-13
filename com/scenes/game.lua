@@ -16,6 +16,8 @@ local gameLoopTimer
 local objectTable = {}
 local menuTable = {}
 local goldui
+local nextBuild
+local buildingFlag = false
 
 -- Create Display Groups
 local backGroup  = display.newGroup()
@@ -40,41 +42,45 @@ local function setTouchOffsets(event)	-- Set offsets for screen movement
 	end
 end
 
-local function updatePositions(event, xmov, ymov)	-- Update position of objects
+local function updatePositions(event, xMov, yMov)	-- Update position of objects
 	for i, obj in pairs(objectTable) do
 		if obj.name ~= "buildmenu" and obj ~= nil then
-			local xmov = event.x - obj.touchOffsetX
-			local ymov = event.y - obj.touchOffsetY
-			obj.x = xmov
-			obj.y = ymov
+			local xMov = event.x - obj.touchOffsetX
+			local yMov = event.y - obj.touchOffsetY
+			obj.x = xMov
+			obj.y = yMov
 		end
 	end
 end
 
+
 local function deselectMenu()
-	for i, menuobj in pairs(menuTable) do
-		if menuobj.name ~= "buildshelf" then
-			uscript.deselectFunctions(menuobj, menuTable)
+	for i, menuObj in pairs(menuTable) do
+		if menuObj.name ~= "buildshelf" then
+			uscript.deselectFunctions(menuObj, menuTable)
 		end
 	end
 end
 
 local function selectMenu(event)
 	if menuTable ~= nil then
-		for i, menuobj in pairs(menuTable) do
-			local xmin = menuobj.x - menuobj.contentWidth/2
-			local xmax = menuobj.x + menuobj.contentWidth/2
-			local ymin = menuobj.y - menuobj.contentHeight/2
-			local ymax = menuobj.y + menuobj.contentHeight/2
+		for i, menuObj in pairs(menuTable) do
+			local xMin = menuObj.x - menuObj.contentWidth/2
+			local xMax = menuObj.x + menuObj.contentWidth/2
+			local yMin = menuObj.y - menuObj.contentHeight/2
+			local yMax = menuObj.y + menuObj.contentHeight/2
 			
-			local xcheck = event.x > xmin and event.x < xmax
-			local ycheck = event.y > ymin and event.y < ymax
+			local xCheck = event.x > xMin and event.x < xMax
+			local yCheck = event.y > yMin and event.y < yMax
 			
-			if xcheck and ycheck then
-				if menuobj.name ~= "buildshelf" then
-					uscript.selectFunctions(menuobj)
+			if xCheck and yCheck then
+				if menuObj.name ~= "buildshelf" then
+					nextBuild = uscript.selectFunctions(menuObj)
+					buildingFlag = true
 					return true
 				else
+					nextBuild = nil
+					buildingFlag = false
 					deselectMenu()
 					return true
 				end
@@ -84,23 +90,49 @@ local function selectMenu(event)
 	return false
 end
 
+local function buildObject(event)
+	if buildingFlag == false or nextBuild == nil then return end
+	local newBuild = uscript.spawnBuilding(event.x, event.y, nextBuild, buildGroup, 0.5)
+	table.insert(objectTable, newBuild)
+	buildingFlag = false
+	nextBuild = nil
+	deselectMenu()
+end
+
+Runtime:addEventListener("tap", buildObject)
+
+local function deselectObjects(event)
+	for i, obj in pairs(objectTable) do
+		if obj ~= nil and obj.name ~= "background" then
+			if obj.name == "buildmenu" then
+				if selectMenu(event) == false then
+					menuTable = uscript.deselectFunctions(obj, menuTable)
+				end
+			elseif obj.selected == true then
+				print(obj.name.." deselected")
+				uscript.deselectFunctions(obj, menuTable)
+			end
+		end
+	end
+end
+
 local function selectObject(event)	-- Function to select objects
+	if buildingFlag == true then return end
 	for i, obj in pairs(objectTable) do	-- Check if object is tapped on
 		if obj ~= nil and obj.name ~= "background" then
-			local xmin = obj.x - obj.contentWidth/2
-			local xmax = obj.x + obj.contentWidth/2
-			local ymin = obj.y - obj.contentHeight/2
-			local ymax = obj.y + obj.contentHeight/2
+			local xMin = obj.x - obj.contentWidth/2
+			local xMax = obj.x + obj.contentWidth/2
+			local yMin = obj.y - obj.contentHeight/2
+			local yMax = obj.y + obj.contentHeight/2
 			
-			local xcheck = event.x > xmin and event.x < xmax
-			local ycheck = event.y > ymin and event.y < ymax
+			local xCheck = event.x > xMin and event.x < xMax
+			local yCheck = event.y > yMin and event.y < yMax
 			-- print("object: " .. obj.name)
-			-- print("xmin: " .. xmin .. ", xmax: " .. xmax)
-			-- print("ymin: " .. ymin .. ", ymax: " .. ymax)
+			-- print("xMin: " .. xMin .. ", xMax: " .. xMax)
+			-- print("yMin: " .. yMin .. ", yMax: " .. yMax)
 			-- print("eventx: " .. event.x .. ", eventy: " .. event.y)
 			
-			
-			if xcheck and ycheck then
+			if xCheck and yCheck then
 				if obj.name == "buildmenu" then
 					if obj.selected == false then
 						menuTable = uscript.selectFunctions(obj)
@@ -110,7 +142,8 @@ local function selectObject(event)	-- Function to select objects
 					return
 				end
 				if obj.selected == false then
-					menuTable = uscript.selectFunctions(obj)
+					deselectObjects(event)
+					uscript.selectFunctions(obj)
 					return
 				end
 			else
@@ -119,7 +152,8 @@ local function selectObject(event)	-- Function to select objects
 						menuTable = uscript.deselectFunctions(obj, menuTable)
 					end
 				elseif obj.selected == true then
-					menuTable = uscript.deselectFunctions(obj, menuTable)
+					print(obj.name.." deselected")
+					uscript.deselectFunctions(obj, menuTable)
 				end
 			end
 		end 
@@ -140,8 +174,8 @@ local function dragBackground(event)	-- Move background on drag
 		setTouchOffsets(event)
 		
 	elseif "moved" == phase then
-		local xmovcheck = event.x - background.touchOffsetX
-		local ymovcheck = event.y - background.touchOffsetY
+		local xMovcheck = event.x - background.touchOffsetX
+		local yMovcheck = event.y - background.touchOffsetY
 		updatePositions(event)		
 		
 	elseif "ended" == phase then
@@ -167,6 +201,7 @@ local function gameLoop()	-- Main Game Loop
 		gold = gold + 100
 	end
 	ui.updateUI(goldui)
+	-- print(menuTable)
 end
 
 function scene:show(event)	-- Runs when scene is on screen

@@ -26,19 +26,19 @@ function uscript.spawnUnit(x, y, unit, dgroup)	-- Spawn Unit
 	newUnit.y = y
 end
 
-function uscript.selectFunctions(obj)	-- Checks building and runs function on selection
+function uscript.selectFunctions(obj)	-- Checks and runs function on selection
 	obj:setSequence("selected")
 	obj.selected = true
 	if obj.name == "castle" then
 		
 	elseif obj.name == "buildmenu" then
 		return ui.showBuildMenu()
-	
+	elseif obj.name == "buildbarracks" then
+		return "barracks"
 	end
-	print(obj.name)
 end
 
-function uscript.deselectFunctions(obj, menuTable)
+function uscript.deselectFunctions(obj, menuTable)	-- Runs functions on deselect
 	obj:setSequence("normal")
 	obj.selected = false
 	if obj.name == "buildmenu" then
