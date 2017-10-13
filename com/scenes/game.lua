@@ -163,6 +163,9 @@ function scene:create(event)	-- Runs on scene creation but before on screen
 end
 
 local function gameLoop()	-- Main Game Loop
+	if gold < 9999 then
+		gold = gold + 100
+	end
 	ui.updateUI(goldui)
 end
 

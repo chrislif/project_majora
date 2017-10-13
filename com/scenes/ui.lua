@@ -12,12 +12,12 @@ function ui.loadUI()
 	local menuTable = {}
 
 	local goldui = display.newImageRect("assets/goldui.png", 15, 15)
-	goldui.x = display.contentWidth - (goldui.contentWidth * 3)
-	goldui.y = goldui.contentHeight
+	goldui.x = display.contentWidth - (goldui.contentWidth * 3) - 10
+	goldui.y = goldui.contentHeight - 20
 
 	local goldtext = display.newText({text = tostring(gold)})
-	goldtext.x = display.contentWidth - (goldui.contentWidth)
-	goldtext.y = goldui.contentHeight - 1
+	goldtext.x = display.contentWidth - (goldui.contentWidth) - 10
+	goldtext.y = goldui.contentHeight - 20
 	goldtext.align = "center"
 	
 	menuTable["goldui"] = goldtext
@@ -26,7 +26,7 @@ function ui.loadUI()
 	buildui.xScale = .4
 	buildui.yScale = .4
 	buildui.x = buildui.contentWidth/2
-	buildui.y = display.contentHeight - 25
+	buildui.y = display.contentHeight
 	buildui.selected = false
 	buildui.name = "buildmenu"
 	
@@ -39,7 +39,7 @@ function ui.showBuildMenu()
 	local menuTable = {}
 	local menushelf = display.newImageRect("assets/buildmenushelf.png", 300, 40)
 	menushelf.x = menushelf.contentWidth/2 + 25
-	menushelf.y = display.contentHeight - 25
+	menushelf.y = display.contentHeight
 	menushelf.name = "buildshelf"
 	
 	menuTable["menushelf"] = menushelf
@@ -48,7 +48,7 @@ function ui.showBuildMenu()
 	buildbarracks.xScale = .15
 	buildbarracks.yScale = .15
 	buildbarracks.x = 75
-	buildbarracks.y = display.contentHeight - 25
+	buildbarracks.y = display.contentHeight
 	buildbarracks.selected = false
 	buildbarracks.name = "buildbarracks"
 	
