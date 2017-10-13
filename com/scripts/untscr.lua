@@ -9,7 +9,33 @@ local ui = require "scenes.ui"
 local uscript = {}
 local spriteTable = sprites.loadSprites()
 
+local costTable = {}
+costTable["castle"] = 0
+costTable["barracks"] = 200
+
+function uscript.onMap(x, y)
+	local xMin = x > background.x - background.contentWidth/2
+	local xMax = x < background.x + background.contentWidth/2
+	local yMin = y > background.y - background.contentHeight/2
+	local yMax = y < background.y + background.contentHeight/2
+	local xCheck = xMin and xMax
+	local yCheck = yMin and yMax
+	
+	if xCheck and yCheck then
+		return true
+	end
+	return false
+end
+
 function uscript.spawnBuilding(x, y, building, dgroup, scale)	-- Spawn Building
+	if uscript.onMap(x, y) == false then
+		print(building.." must be built on the map")
+		return nil
+	end
+	if costTable[building] > gold then 
+		print("not enought gold to build "..building)
+		return nil
+	end
 	local newBuild = display.newSprite(dgroup, spriteTable[building], spriteTable[building.."Data"])
 	newBuild.xScale = scale
 	newBuild.yScale = scale
@@ -17,6 +43,7 @@ function uscript.spawnBuilding(x, y, building, dgroup, scale)	-- Spawn Building
 	newBuild.y = y
 	newBuild.name = building
 	newBuild.selected = false
+	gold = gold - costTable[building]
 	return newBuild
 end
 
