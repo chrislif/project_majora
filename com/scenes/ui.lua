@@ -40,14 +40,17 @@ function ui.showBuildMenu()
 	local menushelf = display.newImageRect("assets/buildmenushelf.png", 300, 40)
 	menushelf.x = menushelf.contentWidth/2 + 25
 	menushelf.y = display.contentHeight - 25
-	menushelf.name = "buildmenu"
+	menushelf.name = "buildshelf"
 	
 	menuTable["menushelf"] = menushelf
 	
-	local buildbarracks = display.newImageRect(spriteTable["barracks"], 1, 25, 25)
-	buildbarracks.x = menushelf.contentWidth/2 + 25
+	local buildbarracks = display.newSprite(spriteTable["barracks"], spriteTable["barracksData"])
+	buildbarracks.xScale = .15
+	buildbarracks.yScale = .15
+	buildbarracks.x = 75
 	buildbarracks.y = display.contentHeight - 25
-	buildbarracks.name = "buildmenu"
+	buildbarracks.selected = false
+	buildbarracks.name = "buildbarracks"
 	
 	menuTable["buildbarracks"] = buildbarracks
 	

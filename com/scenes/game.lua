@@ -51,6 +51,35 @@ local function updatePositions(event, xmov, ymov)	-- Update position of objects
 	end
 end
 
+local function deselectMenu()
+	for i, menuobj in pairs(menuTable) do
+		
+	end
+end
+
+local function selectMenu(event)
+	if menuTable ~= nil then
+		for i, menuobj in pairs(menuTable) do
+			local xmin = menuobj.x - menuobj.contentWidth/2
+			local xmax = menuobj.x + menuobj.contentWidth/2
+			local ymin = menuobj.y - menuobj.contentHeight/2
+			local ymax = menuobj.y + menuobj.contentHeight/2
+			
+			local xcheck = event.x > xmin and event.x < xmax
+			local ycheck = event.y > ymin and event.y < ymax
+			
+			if xcheck and ycheck then
+				print(menuobj.name)
+				if menuobj.name ~= "buildshelf" then
+					uscript.selectFunctions(menuobj)
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
 local function selectObject(event)	-- Function to select objects
 	for i, obj in pairs(objectTable) do	-- Check if object is tapped on
 		if obj ~= nil and obj.name ~= "background" then
@@ -73,12 +102,21 @@ local function selectObject(event)	-- Function to select objects
 					return
 				end
 			else
-				if obj.selected == true then			
-					uscript.deselectFunctions(obj, menuTable)
+				if obj.selected == true then
+					if obj.name == "buildmenu" then
+						if selectMenu(event) == false then
+							uscript.deselectFunctions(obj, menuTable)
+						end
+					else
+						uscript.deselectFunctions(obj, menuTable)
+					end
 				end
 			end
 		end 
 	end
+	
+	
+	
 end
 
 Runtime:addEventListener("tap", selectObject)
