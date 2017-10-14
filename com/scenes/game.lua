@@ -16,6 +16,9 @@ globalMenuTable = {}
 local scene = composer.newScene()
 local gameLoopTimer
 local goldui
+local dayCount = 1
+local hourCount = 0
+local minCount = 0
 
 -- Create Display Groups
 local backGroup  = display.newGroup()
@@ -30,6 +33,11 @@ background.y = display.contentCenterY
 background.name = "background"
 table.insert(objectTable, background)
 
+local function dayTick()	-- Event on the day change
+	if gold < 9999 then
+		gold = gold + 100
+	end
+end
 
 local function setTouchOffsets(event)	-- Set offsets for screen movement
 	for i, obj in pairs(objectTable) do	-- Loop through object table
@@ -140,9 +148,17 @@ function scene:create(event)	-- Runs on scene creation but before on screen
 end
 
 local function gameLoop()	-- Main Game Loop
-	if gold < 9999 then
-		gold = gold + 10
+	minCount = minCount + 1
+	if minCount >= 60 then
+		minCount = 0
+		hourCount = hourCount + 1
 	end
+	if hourCount >= 24 then
+		hourCount = 0
+		dayCount = dayCount + 1
+		dayTick()
+	end
+	print("day: " .. dayCount .. " hour: " .. hourCount .. " min: " .. minCount)
 	ui.updateUI(goldui)
 end
 
@@ -153,7 +169,7 @@ function scene:show(event)	-- Runs when scene is on screen
 	if phase == "will" then
 	
 	elseif phase == "did" then
-		gameLoopTimer = timer.performWithDelay(500, gameLoop, -1)
+		gameLoopTimer = timer.performWithDelay(1, gameLoop, -1)
 	end
 end
 
