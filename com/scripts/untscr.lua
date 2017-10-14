@@ -3,16 +3,21 @@
 -- untscr.lua
 -- collection of all object based scripts
 -----------------------------------------------------------------------------------------
+-- Requires
 local sprites = require "scripts.sprite"
 local ui = require "scenes.ui"
 
 local uscript = {}
+
+-- Table to get all sprites
 local spriteTable = sprites.loadSprites()
 
+-- Table for cost of buildings
 local costTable = {}
 costTable["castle"] = 0
 costTable["barracks"] = 200
 
+-- Table for building collision stats
 local buildingTable = {}
 buildingTable["barracks"] = {}
 buildingTable["barracks"]["width"] = 100
@@ -22,12 +27,11 @@ buildingTable["castle"] = {}
 buildingTable["castle"]["width"] = 100
 buildingTable["castle"]["height"] = 100
 
-function uscript.checkBuildCollision(x, y, building)
+function uscript.checkBuildCollision(x, y, building)	-- Checks collision before placing building
 	local flag = false
 
 	if building == "castle" then return true end
 	if building ~= nil then
-		print(building)
 		local buildXMin = x - buildingTable[building]["width"]/2
 		local buildXMax = x + buildingTable[building]["width"]/2
 		local buildYMin = y - buildingTable[building]["height"]/2
@@ -35,22 +39,23 @@ function uscript.checkBuildCollision(x, y, building)
 		
 		for i, obj in pairs(objectTable) do
 			if obj ~= nil and obj.name ~= "background" and obj.name ~= "buildmenu" then
-				print(obj.name)
+				
 				local xMin = obj.x - obj.contentWidth/2
 				local xMax = obj.x + obj.contentWidth/2
 				local yMin = obj.y - obj.contentHeight/2
 				local yMax = obj.y + obj.contentHeight/2
-				print("buildXMin: " .. buildXMin .. ", buildXMax: " .. buildXMax)
-				print("buildYMin: " .. buildYMin .. ", buildYMax: " .. buildYMax)
-				print("xMin: " .. xMin .. ", xMax: " .. xMax)
-				print("yMin: " .. yMin .. ", yMax: " .. yMax)
+				-- print(obj.name)
+				-- print("buildXMin: " .. buildXMin .. ", buildXMax: " .. buildXMax)
+				-- print("buildYMin: " .. buildYMin .. ", buildYMax: " .. buildYMax)
+				-- print("xMin: " .. xMin .. ", xMax: " .. xMax)
+				-- print("yMin: " .. yMin .. ", yMax: " .. yMax)
 				
 				local xMinCheck = buildXMin < xMin or buildXMin > xMax
 				local xMaxCheck = buildXMax < xMin or buildXMax > xMax
 				local yMinCheck = buildYMin < yMin or buildYMin > yMax
 				local yMaxCheck = buildYMax < yMin or buildYMax > yMax
-				print("xMinCheck: " .. tostring(xMinCheck) .. ", xMaxCheck: " .. tostring(xMaxCheck))
-				print("yMinCheck: " .. tostring(yMinCheck) .. ", yMaxCheck: " .. tostring(yMaxCheck))
+				-- print("xMinCheck: " .. tostring(xMinCheck) .. ", xMaxCheck: " .. tostring(xMaxCheck))
+				-- print("yMinCheck: " .. tostring(yMinCheck) .. ", yMaxCheck: " .. tostring(yMaxCheck))
 				
 				if not((xMinCheck and xMaxCheck) or (yMinCheck and yMaxCheck)) then
 					 return false
@@ -61,7 +66,7 @@ function uscript.checkBuildCollision(x, y, building)
 	end
 end
 
-function uscript.onMap(x, y, building)
+function uscript.onMap(x, y, building)	-- Checks if building is on the map
 	local xMin = x > background.x - background.contentWidth/2
 	local xMax = x < background.x + background.contentWidth/2
 	local yMin = y > background.y - background.contentHeight/2
@@ -124,6 +129,41 @@ function uscript.deselectFunctions(obj, menuTable)	-- Runs functions on deselect
 		ui.hideBuildMenu(menuTable)
 	end
 	return nil
+end
+
+function uscript.dragNdropMenu(event)	-- Drag and drop build menu functionality
+	local menuTarget = event.target
+	local phase = event.phase
+	
+	if phase == "began" then
+		display.currentStage:setFocus(menuTarget)
+		menuTarget.touchOffsetX = event.x - menuTarget.x
+		menuTarget.touchOffsetY = event.y - menuTarget.y
+		
+	elseif phase == "moved" then
+		menuTarget.xScale = .5
+		menuTarget.yScale = .5
+		menuTarget.x = event.x - menuTarget.touchOffsetX
+		menuTarget.y = event.y - menuTarget.touchOffsetY
+	
+	elseif phase == "ended" then
+		local newBuild = uscript.spawnBuilding(menuTarget.x, menuTarget.y, menuTarget.building, buildGroup, 0.5)
+		table.insert(objectTable, newBuild)
+		ui.hideBuildMenu(globalMenuTable)
+		globalMenuTable = ui.showBuildMenu()
+		uscript.setEventListeners(globalMenuTable)
+		display.currentStage:setFocus(nil)
+	end
+	
+	return true
+end
+
+function uscript.setEventListeners(globalMenuTable)	-- Sets event listeners for drag and drop menu
+	for i, menuObj in pairs(globalMenuTable) do
+		if menuObj ~= nil and menuObj.name ~= "buildshelf" then
+			menuObj:addEventListener("touch", uscript.dragNdropMenu)
+		end
+	end
 end
 
 return uscript

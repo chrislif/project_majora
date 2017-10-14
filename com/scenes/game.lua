@@ -11,18 +11,16 @@ local composer = require "composer"
 
 -- Initialize Scene
 gold = 0
+objectTable = {}
+globalMenuTable = {}
 local scene = composer.newScene()
 local gameLoopTimer
-objectTable = {}
-local menuTable = {}
 local goldui
-local nextBuild
-local buildingFlag = false
 
 -- Create Display Groups
 local backGroup  = display.newGroup()
 local unitGroup  = display.newGroup()
-local buildGroup = display.newGroup()
+buildGroup = display.newGroup()
 local menuGroup = display.newGroup()
 
 -- Load Background
@@ -53,61 +51,20 @@ local function updatePositions(event, xMov, yMov)	-- Update position of objects
 	end
 end
 
-
-local function deselectMenu()
-	for i, menuObj in pairs(menuTable) do
-		if menuObj.name ~= "buildshelf" then
-			uscript.deselectFunctions(menuObj, menuTable)
-		end
-	end
-end
-
-local function selectMenu(event)
-	if menuTable ~= nil then
-		for i, menuObj in pairs(menuTable) do
-			local xMin = menuObj.x - menuObj.contentWidth/2
-			local xMax = menuObj.x + menuObj.contentWidth/2
-			local yMin = menuObj.y - menuObj.contentHeight/2
-			local yMax = menuObj.y + menuObj.contentHeight/2
-			
-			local xCheck = event.x > xMin and event.x < xMax
-			local yCheck = event.y > yMin and event.y < yMax
-			
-			if xCheck and yCheck then
-				if menuObj.name ~= "buildshelf" then
-					nextBuild = uscript.selectFunctions(menuObj)
-					buildingFlag = true
-					return true
-				else
-					nextBuild = nil
-					buildingFlag = false
-					deselectMenu()
-					return true
-				end
-			end
-		end
-	end
-	return false
-end
-
-
-local function deselectObjects(event)
+local function deselectObjects(event)	-- Loop through all objects to deselect
 	for i, obj in pairs(objectTable) do
 		if obj ~= nil and obj.name ~= "background" then
 			if obj.name == "buildmenu" then
-				if selectMenu(event) == false then
-					menuTable = uscript.deselectFunctions(obj, menuTable)
-				end
+				globalMenuTable = uscript.deselectFunctions(obj, globalMenuTable)
 			elseif obj.selected == true then
 				print(obj.name.." deselected")
-				uscript.deselectFunctions(obj, menuTable)
+				uscript.deselectFunctions(obj, globalMenuTable)
 			end
 		end
 	end
 end
 
 local function selectObject(event)	-- Function to select objects
-	if buildingFlag == true then return false end
 	for i, obj in pairs(objectTable) do	-- Check if object is tapped on
 		if obj ~= nil and obj.name ~= "background" then
 			local xMin = obj.x - obj.contentWidth/2
@@ -125,9 +82,10 @@ local function selectObject(event)	-- Function to select objects
 			if xCheck and yCheck then
 				if obj.name == "buildmenu" then
 					if obj.selected == false then
-						menuTable = uscript.selectFunctions(obj)
+						globalMenuTable = uscript.selectFunctions(obj)
+						uscript.setEventListeners(globalMenuTable)
 					else
-						menuTable = uscript.deselectFunctions(obj, menuTable)
+						globalMenuTable = uscript.deselectFunctions(obj, globalMenuTable)
 					end
 					return true
 				end
@@ -138,15 +96,9 @@ local function selectObject(event)	-- Function to select objects
 				end
 			else
 				if obj.name == "buildmenu" then
-					if selectMenu(event) == false then
-						menuTable = uscript.deselectFunctions(obj, menuTable)
-					else
-						return true
-					end
-					
+					globalMenuTable = uscript.deselectFunctions(obj, globalMenuTable)
 				elseif obj.selected == true then
-					print(obj.name.." deselected")
-					uscript.deselectFunctions(obj, menuTable)
+					uscript.deselectFunctions(obj, globalMenuTable)
 				end
 			end
 		end 
@@ -155,22 +107,6 @@ local function selectObject(event)	-- Function to select objects
 end
 
 Runtime:addEventListener("tap", selectObject)
-
-local function buildObject(event)
-	if buildingFlag == false or nextBuild == nil then return end
-	if selectMenu(event) == false then
-		local newBuild = uscript.spawnBuilding(event.x, event.y, nextBuild, buildGroup, 0.5)
-		if newBuild ~= nil then
-			table.insert(objectTable, newBuild)
-			deselectMenu()
-			nextBuild = nil
-			buildingFlag = false
-		end
-		
-	end
-end
-
-Runtime:addEventListener("tap", buildObject)
 
 local function dragBackground(event)	-- Move background on drag
 	local background = event.target
@@ -208,7 +144,6 @@ local function gameLoop()	-- Main Game Loop
 		gold = gold + 10
 	end
 	ui.updateUI(goldui)
-	-- print(menuTable)
 end
 
 function scene:show(event)	-- Runs when scene is on screen

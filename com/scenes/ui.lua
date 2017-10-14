@@ -8,7 +8,7 @@ local sprites = require "scripts.sprite"
 local ui = {}
 local spriteTable = sprites.loadSprites()
 
-function ui.loadUI()
+function ui.loadUI()	-- Load UI, usually on load
 	local menuTable = {}
 
 	local goldui = display.newImageRect("assets/goldui.png", 15, 15)
@@ -35,7 +35,7 @@ function ui.loadUI()
 	return menuTable
 end
 
-function ui.showBuildMenu()
+function ui.showBuildMenu()	-- Load build menu
 	local menuTable = {}
 	local menushelf = display.newImageRect("assets/buildmenushelf.png", 300, 40)
 	menushelf.x = menushelf.contentWidth/2 + 25
@@ -51,17 +51,21 @@ function ui.showBuildMenu()
 	buildbarracks.y = display.contentHeight
 	buildbarracks.selected = false
 	buildbarracks.name = "buildbarracks"
+	buildbarracks.building = "barracks"
 	
 	menuTable["buildbarracks"] = buildbarracks
 	
 	return menuTable
 end
 
-function ui.transitionBuildMenu()
-
+function ui.getBuildOutline(building)	-- Get buildoutline for drag and drop menu
+	local outline = display.newSprite(spriteTable[building], spriteTable[building.."Data"])
+	outline.xScale = .5
+	outline.yScale = .5
+	return outline
 end
 
-function ui.hideBuildMenu(menuTable)
+function ui.hideBuildMenu(menuTable)	-- Hide build menu through destruction
 	if menuTable ~= nil then
 		for i, menu in pairs(menuTable) do
 			if menu ~= nil then
@@ -71,10 +75,8 @@ function ui.hideBuildMenu(menuTable)
 	end
 end
 
-function ui.updateUI(goldui)
+function ui.updateUI(goldui)	-- Update UI, currently only gold
 	goldui.text = tostring(gold)
-
-	
 end
 
 return ui

@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------------------------
 local sprites = {}
 
-function sprites:loadSprites()
+function sprites:loadSprites() -- Gets all the necessary sprite sheets
 	local spriteSheetTable = {}
 
 		-- Castle Data
