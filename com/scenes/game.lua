@@ -13,7 +13,7 @@ local composer = require "composer"
 gold = 0
 local scene = composer.newScene()
 local gameLoopTimer
-local objectTable = {}
+objectTable = {}
 local menuTable = {}
 local goldui
 local nextBuild
@@ -155,7 +155,6 @@ local function selectObject(event)	-- Function to select objects
 end
 
 Runtime:addEventListener("tap", selectObject)
-
 
 local function buildObject(event)
 	if buildingFlag == false or nextBuild == nil then return end

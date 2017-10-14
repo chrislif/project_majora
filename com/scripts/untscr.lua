@@ -13,7 +13,55 @@ local costTable = {}
 costTable["castle"] = 0
 costTable["barracks"] = 200
 
-function uscript.onMap(x, y)
+local buildingTable = {}
+buildingTable["barracks"] = {}
+buildingTable["barracks"]["width"] = 100
+buildingTable["barracks"]["height"] = 100
+
+buildingTable["castle"] = {}
+buildingTable["castle"]["width"] = 100
+buildingTable["castle"]["height"] = 100
+
+function uscript.checkBuildCollision(x, y, building)
+	local flag = false
+
+	if building == "castle" then return true end
+	if building ~= nil then
+		print(building)
+		local buildXMin = x - buildingTable[building]["width"]/2
+		local buildXMax = x + buildingTable[building]["width"]/2
+		local buildYMin = y - buildingTable[building]["height"]/2
+		local buildYMax = y + buildingTable[building]["height"]/2
+		
+		for i, obj in pairs(objectTable) do
+			if obj ~= nil and obj.name ~= "background" and obj.name ~= "buildmenu" then
+				print(obj.name)
+				local xMin = obj.x - obj.contentWidth/2
+				local xMax = obj.x + obj.contentWidth/2
+				local yMin = obj.y - obj.contentHeight/2
+				local yMax = obj.y + obj.contentHeight/2
+				print("buildXMin: " .. buildXMin .. ", buildXMax: " .. buildXMax)
+				print("buildYMin: " .. buildYMin .. ", buildYMax: " .. buildYMax)
+				print("xMin: " .. xMin .. ", xMax: " .. xMax)
+				print("yMin: " .. yMin .. ", yMax: " .. yMax)
+				
+				local xMinCheck = buildXMin < xMin or buildXMin > xMax
+				local xMaxCheck = buildXMax < xMin or buildXMax > xMax
+				local yMinCheck = buildYMin < yMin or buildYMin > yMax
+				local yMaxCheck = buildYMax < yMin or buildYMax > yMax
+				print("xMinCheck: " .. tostring(xMinCheck) .. ", xMaxCheck: " .. tostring(xMaxCheck))
+				print("yMinCheck: " .. tostring(yMinCheck) .. ", yMaxCheck: " .. tostring(yMaxCheck))
+				
+				if not((xMinCheck and xMaxCheck) or (yMinCheck and yMaxCheck)) then
+					 return false
+				end
+			end
+		end
+		return true
+	end
+end
+
+function uscript.onMap(x, y, building)
 	local xMin = x > background.x - background.contentWidth/2
 	local xMax = x < background.x + background.contentWidth/2
 	local yMin = y > background.y - background.contentHeight/2
@@ -28,8 +76,12 @@ function uscript.onMap(x, y)
 end
 
 function uscript.spawnBuilding(x, y, building, dgroup, scale)	-- Spawn Building
-	if uscript.onMap(x, y) == false then
+	if uscript.onMap(x, y, building) == false then
 		print(building.." must be built on the map")
+		return nil
+	end
+	if uscript.checkBuildCollision(x, y, building) == false then
+		print(building.." can't be placed on another building")
 		return nil
 	end
 	if costTable[building] > gold then 
