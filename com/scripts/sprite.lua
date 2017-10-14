@@ -83,6 +83,119 @@ function sprites:loadSprites() -- Gets all the necessary sprite sheets
 	}
 	spriteSheetTable["barracks"] = barracksSheet
 	spriteSheetTable["barracksData"] = barracksSequenceData
+		
+		-- Rogue Guild Data
+		----------------------------------------------------------------------------------
+	local rogueguildOptions = 
+	{
+		frames =
+		{
+		  { -- 1) rogueguild normal
+			x = 0,
+			y = 0,
+			width = 200,
+			height = 200
+		  },
+		  { -- 2) rogueguild selected
+			x = 0,
+			y = 200,
+			width = 200,
+			height = 200
+		  },
+		},
+	}
+	local rogueguildSheet = graphics.newImageSheet("assets/rogueguild.png", rogueguildOptions)
+	
+	local rogueguildSequenceData = 
+	{
+		{
+		name = "normal",
+		start = 1,
+		count = 1,
+		},
+		{
+		name = "selected",
+		start = 2,
+		count = 1,
+		}
+	}
+	spriteSheetTable["rogueguild"] = rogueguildSheet
+	spriteSheetTable["rogueguildData"] = rogueguildSequenceData
+		
+		-- Ranger Guild Data
+		----------------------------------------------------------------------------------
+	local rangerguildOptions =
+	{
+		frames =
+		{
+		  { -- 1) rangerguild normal
+			x = 0,
+			y = 0,
+			width = 200,
+			height = 200
+		  },
+		  { -- 2) rangerguild selected
+			x = 0,
+			y = 200,
+			width = 200,
+			height = 200
+		  },
+		},
+	}
+	local rangerguildSheet = graphics.newImageSheet("assets/rangerguild.png", rangerguildOptions)
+	
+	local rangerguildSequenceData =
+	{
+		{
+		name = "normal",
+		start = 1,
+		count = 1,
+		},
+		{
+		name = "selected",
+		start = 2,
+		count = 1,
+		}
+	}
+	spriteSheetTable["rangerguild"] = rangerguildSheet
+	spriteSheetTable["rangerguildData"] = rangerguildSequenceData
+	
+		-- Wizard Guild Data
+		local wizzyguildOptions =
+	{
+		frames =
+		{
+		  { -- 1) wizzyguild normal
+			x = 0,
+			y = 0,
+			width = 200,
+			height = 200
+		  },
+		  { -- 2) wizzyguild selected
+			x = 0,
+			y = 200,
+			width = 200,
+			height = 200
+		  },
+		},
+	}
+	local wizzyguildSheet = graphics.newImageSheet("assets/wizzyguild.png", wizzyguildOptions)
+	
+	local wizzyguildSequenceData =
+	{
+		{
+		name = "normal",
+		start = 1,
+		count = 1,
+		},
+		{
+		name = "selected",
+		start = 2,
+		count = 1,
+		}
+	}
+	spriteSheetTable["wizzyguild"] = wizzyguildSheet
+	spriteSheetTable["wizzyguildData"] = wizzyguildSequenceData
 	
 		-- Build Menu Data
 		----------------------------------------------------------------------------------

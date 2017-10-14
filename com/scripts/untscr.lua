@@ -16,12 +16,27 @@ local spriteTable = sprites.loadSprites()
 local costTable = {}
 costTable["castle"] = 0
 costTable["barracks"] = 200
+costTable["rangerguild"] = 150
+costTable["rogueguild"] = 250
+costTable["wizzyguild"] = 300
 
 -- Table for building collision stats
 local buildingTable = {}
 buildingTable["barracks"] = {}
 buildingTable["barracks"]["width"] = 100
 buildingTable["barracks"]["height"] = 100
+
+buildingTable["rangerguild"] = {}
+buildingTable["rangerguild"]["width"] = 100
+buildingTable["rangerguild"]["height"] = 100
+
+buildingTable["wizzyguild"] = {}
+buildingTable["wizzyguild"]["width"] = 100
+buildingTable["wizzyguild"]["height"] = 100
+
+buildingTable["rogueguild"] = {}
+buildingTable["rogueguild"]["width"] = 100
+buildingTable["rogueguild"]["height"] = 100
 
 buildingTable["castle"] = {}
 buildingTable["castle"]["width"] = 100

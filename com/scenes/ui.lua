@@ -37,13 +37,15 @@ end
 
 function ui.showBuildMenu()	-- Load build menu
 	local menuTable = {}
+	
+	-- Menu Shelf
 	local menushelf = display.newImageRect("assets/buildmenushelf.png", 300, 40)
 	menushelf.x = menushelf.contentWidth/2 + 25
 	menushelf.y = display.contentHeight
 	menushelf.name = "buildshelf"
-	
 	menuTable["menushelf"] = menushelf
 	
+	-- Barracks
 	local buildbarracks = display.newSprite(spriteTable["barracks"], spriteTable["barracksData"])
 	buildbarracks.xScale = .15
 	buildbarracks.yScale = .15
@@ -52,9 +54,40 @@ function ui.showBuildMenu()	-- Load build menu
 	buildbarracks.selected = false
 	buildbarracks.name = "buildbarracks"
 	buildbarracks.building = "barracks"
-	
 	menuTable["buildbarracks"] = buildbarracks
 	
+	-- Ranger Guild
+	local buildrangerguild = display.newSprite(spriteTable["rangerguild"], spriteTable["rangerguildData"])
+	buildrangerguild.xScale = .15
+	buildrangerguild.yScale = .15
+	buildrangerguild.x = 125
+	buildrangerguild.y = display.contentHeight
+	buildrangerguild.selected = false
+	buildrangerguild.name = "buildrangerguild"
+	buildrangerguild.building = "rangerguild"
+	menuTable["buildrangerguild"] = buildrangerguild
+	
+	-- Rogue Guild
+	local buildrogueguild = display.newSprite(spriteTable["rogueguild"], spriteTable["rogueguildData"])
+	buildrogueguild.xScale = .15
+	buildrogueguild.yScale = .15
+	buildrogueguild.x = 175
+	buildrogueguild.y = display.contentHeight
+	buildrogueguild.selected = false
+	buildrogueguild.name = "buildrogueguild"
+	buildrogueguild.building = "rogueguild"
+	menuTable["buildrogueguild"] = buildrogueguild
+	
+	-- Wizard Guild
+	local buildwizzyguild = display.newSprite(spriteTable["wizzyguild"], spriteTable["wizzyguildData"])
+	buildwizzyguild.xScale = .15
+	buildwizzyguild.yScale = .15
+	buildwizzyguild.x = 225
+	buildwizzyguild.y = display.contentHeight
+	buildwizzyguild.selected = false
+	buildwizzyguild.name = "buildwizzyguild"
+	buildwizzyguild.building = "wizzyguild"
+	menuTable["buildwizzyguild"] = buildwizzyguild
 	return menuTable
 end
 

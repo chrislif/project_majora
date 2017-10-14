@@ -10,7 +10,7 @@ local ui = require "scenes.ui"
 local composer = require "composer"
 
 -- Initialize Scene
-gold = 0
+gold = 1000
 objectTable = {}
 globalMenuTable = {}
 local scene = composer.newScene()
@@ -65,7 +65,6 @@ local function deselectObjects(event)	-- Loop through all objects to deselect
 			if obj.name == "buildmenu" then
 				globalMenuTable = uscript.deselectFunctions(obj, globalMenuTable)
 			elseif obj.selected == true then
-				print(obj.name.." deselected")
 				uscript.deselectFunctions(obj, globalMenuTable)
 			end
 		end
@@ -158,7 +157,7 @@ local function gameLoop()	-- Main Game Loop
 		dayCount = dayCount + 1
 		dayTick()
 	end
-	print("day: " .. dayCount .. " hour: " .. hourCount .. " min: " .. minCount)
+	-- print("day: " .. dayCount .. " hour: " .. hourCount .. " min: " .. minCount)
 	ui.updateUI(goldui)
 end
 
