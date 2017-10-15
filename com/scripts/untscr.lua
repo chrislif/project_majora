@@ -11,6 +11,7 @@ local uscript = {}
 
 -- Table to get all sprites
 local spriteTable = sprites.loadSprites()
+local buildingBuffer = 30 -- The minimum distance for how close buildings are allowed to be
 
 -- Table for cost of buildings
 local costTable = {}
@@ -55,10 +56,10 @@ function uscript.checkBuildCollision(x, y, building)	-- Checks collision before 
 		for i, obj in pairs(objectTable) do
 			if obj ~= nil and obj.name ~= "background" and obj.name ~= "buildmenu" then
 				
-				local xMin = obj.x - obj.contentWidth/2
-				local xMax = obj.x + obj.contentWidth/2
-				local yMin = obj.y - obj.contentHeight/2
-				local yMax = obj.y + obj.contentHeight/2
+				local xMin = obj.x - obj.contentWidth/2 - buildingBuffer
+				local xMax = obj.x + obj.contentWidth/2 + buildingBuffer
+				local yMin = obj.y - obj.contentHeight/2 - buildingBuffer
+				local yMax = obj.y + obj.contentHeight/2 + buildingBuffer
 				-- print(obj.name)
 				-- print("buildXMin: " .. buildXMin .. ", buildXMax: " .. buildXMax)
 				-- print("buildYMin: " .. buildYMin .. ", buildYMax: " .. buildYMax)
@@ -82,10 +83,17 @@ function uscript.checkBuildCollision(x, y, building)	-- Checks collision before 
 end
 
 function uscript.onMap(x, y, building)	-- Checks if building is on the map
-	local xMin = x > background.x - background.contentWidth/2
-	local xMax = x < background.x + background.contentWidth/2
-	local yMin = y > background.y - background.contentHeight/2
-	local yMax = y < background.y + background.contentHeight/2
+	-- Building Parameters
+	local buildXMin = x - buildingTable[building]["width"]/2
+	local buildXMax = x + buildingTable[building]["width"]/2
+	local buildYMin = y - buildingTable[building]["height"]/2
+	local buildYMax = y + buildingTable[building]["height"]/2
+	-- Check against background
+	local xMin = buildXMin > background.x - background.contentWidth/2
+	local xMax = buildXMax < background.x + background.contentWidth/2
+	local yMin = buildYMin > background.y - background.contentHeight/2
+	local yMax = buildYMax < background.y + background.contentHeight/2
+	-- Validate Checks
 	local xCheck = xMin and xMax
 	local yCheck = yMin and yMax
 	
@@ -146,20 +154,34 @@ function uscript.deselectFunctions(obj, menuTable)	-- Runs functions on deselect
 	return nil
 end
 
+local bufferOutline
+
 function uscript.dragNdropMenu(event)	-- Drag and drop build menu functionality
 	local menuTarget = event.target
 	local phase = event.phase
+	local newScale = .5
 	
 	if phase == "began" then
 		display.currentStage:setFocus(menuTarget)
 		menuTarget.touchOffsetX = event.x - menuTarget.x
 		menuTarget.touchOffsetY = event.y - menuTarget.y
 		
+		-- Calculate Buffer Outline
+		local bufferX = ((menuTarget.contentWidth / menuTarget.xScale) * newScale) + (2 * buildingBuffer)
+		local bufferY = ((menuTarget.contentHeight / menuTarget.yScale) * newScale) + (2 * buildingBuffer)
+		bufferOutline = display.newImageRect("assets/bufferoutline.png", bufferX, bufferY)
+		bufferOutline.x = menuTarget.x
+		bufferOutline.y = menuTarget.y
 	elseif phase == "moved" then
-		menuTarget.xScale = .5
-		menuTarget.yScale = .5
+		menuTarget.xScale = newScale
+		menuTarget.yScale = newScale
 		menuTarget.x = event.x - menuTarget.touchOffsetX
 		menuTarget.y = event.y - menuTarget.touchOffsetY
+		
+		if bufferOutline ~= nil then -- Move Buffer Outline
+			bufferOutline.x = menuTarget.x
+			bufferOutline.y = menuTarget.y
+		end
 	
 	elseif phase == "ended" then
 		local newBuild = uscript.spawnBuilding(menuTarget.x, menuTarget.y, menuTarget.building, buildGroup, 0.5)
@@ -168,6 +190,11 @@ function uscript.dragNdropMenu(event)	-- Drag and drop build menu functionality
 		globalMenuTable = ui.showBuildMenu()
 		uscript.setEventListeners(globalMenuTable)
 		display.currentStage:setFocus(nil)
+		
+		if bufferOutline ~= nil then -- Remove Buffer Outline
+			bufferOutline:removeSelf()
+			bufferOutline = nil
+		end
 	end
 	
 	return true
