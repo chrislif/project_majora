@@ -135,19 +135,17 @@ end
 
 function uscript.selectFunctions(obj)	-- Checks and runs function on selection
 	obj:setSequence("selected")
-	obj.selected = true
-	if obj.name == "castle" then
-		
-	elseif obj.name == "buildmenu" then
+	obj.selected = true	
+	ui.selectUI(obj)
+	if obj.name == "buildmenu" then
 		return ui.showBuildMenu()
-	elseif obj.name == "buildbarracks" then
-		return "barracks"
 	end
 end
 
 function uscript.deselectFunctions(obj, menuTable)	-- Runs functions on deselect
 	obj:setSequence("normal")
 	obj.selected = false
+	ui.deselectUI()
 	if obj.name == "buildmenu" then
 		ui.hideBuildMenu(menuTable)
 	end
@@ -161,42 +159,45 @@ function uscript.dragNdropMenu(event)	-- Drag and drop build menu functionality
 	local phase = event.phase
 	local newScale = .5
 	
-	if phase == "began" then
-		display.currentStage:setFocus(menuTarget)
-		menuTarget.touchOffsetX = event.x - menuTarget.x
-		menuTarget.touchOffsetY = event.y - menuTarget.y
+	if menuTarget ~= nil then	-- Edge Case error check
 		
-		-- Calculate Buffer Outline
-		local bufferX = ((menuTarget.contentWidth / menuTarget.xScale) * newScale) + (2 * buildingBuffer)
-		local bufferY = ((menuTarget.contentHeight / menuTarget.yScale) * newScale) + (2 * buildingBuffer)
-		bufferOutline = display.newImageRect("assets/bufferoutline.png", bufferX, bufferY)
-		bufferOutline.x = menuTarget.x
-		bufferOutline.y = menuTarget.y
-	elseif phase == "moved" then
-		menuTarget.xScale = newScale
-		menuTarget.yScale = newScale
-		menuTarget.x = event.x - menuTarget.touchOffsetX
-		menuTarget.y = event.y - menuTarget.touchOffsetY
-		
-		if bufferOutline ~= nil then -- Move Buffer Outline
+		if phase == "began" then
+			display.currentStage:setFocus(menuTarget)
+			menuTarget.touchOffsetX = event.x - menuTarget.x
+			menuTarget.touchOffsetY = event.y - menuTarget.y
+			
+			-- Calculate Buffer Outline
+			local bufferX = ((menuTarget.contentWidth / menuTarget.xScale) * newScale) + (2 * buildingBuffer)
+			local bufferY = ((menuTarget.contentHeight / menuTarget.yScale) * newScale) + (2 * buildingBuffer)
+			bufferOutline = display.newImageRect("assets/bufferoutline.png", bufferX, bufferY)
 			bufferOutline.x = menuTarget.x
 			bufferOutline.y = menuTarget.y
-		end
-	
-	elseif phase == "ended" then
-		local newBuild = uscript.spawnBuilding(menuTarget.x, menuTarget.y, menuTarget.building, buildGroup, 0.5)
-		table.insert(objectTable, newBuild)
-		ui.hideBuildMenu(globalMenuTable)
-		globalMenuTable = ui.showBuildMenu()
-		uscript.setEventListeners(globalMenuTable)
-		display.currentStage:setFocus(nil)
+		elseif phase == "moved" then
+			menuTarget.xScale = newScale
+			menuTarget.yScale = newScale
+			menuTarget.x = event.x - menuTarget.touchOffsetX
+			menuTarget.y = event.y - menuTarget.touchOffsetY
+			
+			if bufferOutline ~= nil then -- Move Buffer Outline
+				bufferOutline.x = menuTarget.x
+				bufferOutline.y = menuTarget.y
+			end
 		
-		if bufferOutline ~= nil then -- Remove Buffer Outline
-			bufferOutline:removeSelf()
-			bufferOutline = nil
+		elseif phase == "ended" then
+			local newBuild = uscript.spawnBuilding(menuTarget.x, menuTarget.y, menuTarget.building, buildGroup, 0.5)
+			table.insert(objectTable, newBuild)
+			ui.hideBuildMenu(globalMenuTable)
+			globalMenuTable = ui.showBuildMenu()
+			uscript.setEventListeners(globalMenuTable)
+			display.currentStage:setFocus(nil)
+			
+			if bufferOutline ~= nil then -- Remove Buffer Outline
+				bufferOutline:removeSelf()
+				bufferOutline = nil
+			end
 		end
+		
 	end
-	
 	return true
 end
 

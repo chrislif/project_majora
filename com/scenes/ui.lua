@@ -6,26 +6,37 @@
 local sprites = require "scripts.sprite"
 
 local ui = {}
+local selectui
+local goldui
+local goldtext
+local buildui
 local spriteTable = sprites.loadSprites()
+
 
 function ui.loadUI()	-- Load UI, usually on load
 	local menuTable = {}
 
-	local goldui = display.newImageRect("assets/goldui.png", 15, 15)
+	goldui = display.newImageRect("assets/goldui.png", 15, 15)
 	goldui.x = display.contentWidth - (goldui.contentWidth * 3) - 10
 	goldui.y = goldui.contentHeight - 20
 
-	local goldtext = display.newText({text = tostring(gold)})
+	selectui = display.newSprite(spriteTable["selectui"], spriteTable["selectuiData"])
+	selectui.xScale = .5
+	selectui.yScale = .5
+	selectui.x = selectui.contentWidth/2 + 10
+	selectui.y = selectui.contentHeight/2 - 20
+	
+	goldtext = display.newText({text = tostring(gold)})
 	goldtext.x = display.contentWidth - (goldui.contentWidth) - 10
 	goldtext.y = goldui.contentHeight - 20
 	goldtext.align = "center"
 	
 	menuTable["goldui"] = goldtext
 	
-	local buildui = display.newSprite(spriteTable["buildmenu"], spriteTable["buildmenuData"])
+	buildui = display.newSprite(spriteTable["buildmenu"], spriteTable["buildmenuData"])
 	buildui.xScale = .4
 	buildui.yScale = .4
-	buildui.x = buildui.contentWidth/2
+	buildui.x = buildui.contentWidth/2 + 10
 	buildui.y = display.contentHeight
 	buildui.selected = false
 	buildui.name = "buildmenu"
@@ -39,8 +50,8 @@ function ui.showBuildMenu()	-- Load build menu
 	local menuTable = {}
 	
 	-- Menu Shelf
-	local menushelf = display.newImageRect("assets/buildmenushelf.png", 300, 40)
-	menushelf.x = menushelf.contentWidth/2 + 25
+	local menushelf = display.newImageRect("assets/buildmenushelf.png", 275, 40)
+	menushelf.x = menushelf.contentWidth/2 + 35
 	menushelf.y = display.contentHeight
 	menushelf.name = "buildshelf"
 	menuTable["menushelf"] = menushelf
@@ -96,6 +107,14 @@ function ui.getBuildOutline(building)	-- Get buildoutline for drag and drop menu
 	outline.xScale = .5
 	outline.yScale = .5
 	return outline
+end
+
+function ui.selectUI(obj)
+	selectui:setSequence(obj.name .. "Selected")
+end
+
+function ui.deselectUI()
+	selectui:setSequence("normal")
 end
 
 function ui.hideBuildMenu(menuTable)	-- Hide build menu through destruction

@@ -199,6 +199,49 @@ function sprites:loadSprites() -- Gets all the necessary sprite sheets
 	
 		-- Build Menu Data
 		----------------------------------------------------------------------------------
+	local selectuiOptions =
+	{
+		frames =
+		{
+		  { -- 1) selectui normal
+			x = 0,
+			y = 0,
+			width = 100,
+			height = 100
+		  },
+		  { -- 2) selectui castle selected
+			x = 0,
+			y = 100,
+			width = 100,
+			height = 100
+		  },
+		},
+	}
+	local selectuiSheet = graphics.newImageSheet("assets/selectui.png", selectuiOptions)
+	
+	local selectuiSequenceData =
+	{
+		{
+		name = "normal",
+		start = 1,
+		count = 1,
+		},
+		{
+		name = "castleSelected",
+		start = 2,
+		count = 1,
+		},
+		{
+		name = "barracksSelected",
+		start = 2,
+		count = 1,
+		}
+	}
+	spriteSheetTable["selectui"] = selectuiSheet
+	spriteSheetTable["selectuiData"] = selectuiSequenceData
+	
+		-- Build Menu Data
+		----------------------------------------------------------------------------------
 	local buildmenuOptions =	
 	{
 		frames =

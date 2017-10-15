@@ -172,17 +172,7 @@ function scene:show(event)	-- Runs when scene is on screen
 	end
 end
 
-function scene:hide(event)	-- Runs when scene will be hidden
-
-end
-
-function scene:destroy(event)	-- Runs when scene is destroyed
-
-end
-
 scene:addEventListener("create", scene)
 scene:addEventListener("show", scene)
-scene:addEventListener("hide", scene)
-scene:addEventListener("destroy", scene)
 
 return scene
