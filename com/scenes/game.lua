@@ -77,9 +77,29 @@ local function deselectObjects(event)	-- Loop through all objects to deselect
 	end
 end
 
+local function checkMenu(event)
+	if objectTable["recruitMenu"] ~= nil then
+		local obj = objectTable["recruitMenu"]
+
+		local xMin = obj.x - obj.contentWidth/2
+		local xMax = obj.x + obj.contentWidth/2
+		local yMin = obj.y - obj.contentHeight/2
+		local yMax = obj.y + obj.contentHeight/2
+		
+		local xCheck = event.x > xMin and event.x < xMax
+		local yCheck = event.y > yMin and event.y < yMax
+		
+		if xCheck and yCheck then
+			return true
+			
+		end
+	end
+	return false
+end
+
 local function selectObject(event)	-- Function to select objects
 	for i, obj in pairs(objectTable) do	-- Check if object is tapped on
-		if obj ~= nil and obj.name ~= "background" then
+		if obj ~= nil and obj.name ~= "background" and obj.type ~= "recruit" then
 			local xMin = obj.x - obj.contentWidth/2
 			local xMax = obj.x + obj.contentWidth/2
 			local yMin = obj.y - obj.contentHeight/2
@@ -92,32 +112,34 @@ local function selectObject(event)	-- Function to select objects
 			-- print("yMin: " .. yMin .. ", yMax: " .. yMax)
 			-- print("eventx: " .. event.x .. ", eventy: " .. event.y)
 			
-			if xCheck and yCheck then
-				if obj.name == "buildmenu" then
-					if obj.selected == false then
-						uscript.deselectFunctions(obj, globalMenuTable)
+			if xCheck and yCheck then					-- Object was clicked
+				if obj.name == "buildmenu" then			-- Check if build menu is clicked
+					if obj.selected == false then		-- Build menu is clicked and not already selected
 						deselectObjects(event)
 						globalMenuTable = uscript.selectFunctions(obj)
 						uscript.setEventListeners(globalMenuTable)
-					else
+						return true
+					else								-- Build menu was already selected
 						globalMenuTable = uscript.deselectFunctions(obj, globalMenuTable)
 					end
-					return true
-				end
-				if obj.selected == false then
+				elseif obj.selected == false then		-- Check if object was already selected					
 					deselectObjects(event)
 					globalMenuTable = uscript.selectFunctions(obj)
-					for i, menu in pairs(globalMenuTable) do
-						objectTable["recruitMenu"] = menu
-					end
-					uscript.setEventListeners(globalMenuTable)
 					return true
-				end
-			else
-				if obj.name == "buildmenu" then
-					globalMenuTable = uscript.deselectFunctions(obj, globalMenuTable)
 				elseif obj.selected == true then
-					uscript.deselectFunctions(obj, globalMenuTable)
+					if checkMenu(event) then
+						uscript.recruitMenu(obj)
+					end
+				end
+			else										-- Object was not clicked
+				if obj.name == "buildmenu" and obj.selected == true then	-- Build menu deselect functions
+					globalMenuTable = uscript.deselectFunctions(obj, globalMenuTable)
+				elseif obj.selected == true then		-- Object was selected
+					if checkMenu(event) then			-- Check if there is a menu to be clicked instead
+						uscript.recruitMenu(obj)
+					else								-- Object deselect functions
+						uscript.deselectFunctions(obj, globalMenuTable)
+					end
 				end
 			end
 		end 

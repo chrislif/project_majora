@@ -138,31 +138,34 @@ end
 
 function uscript.selectFunctions(obj)	-- Checks and runs function on selection
 	obj:setSequence("selected")
+	-- print(obj.name .. " sel")
 	obj.selected = true
 	if obj.name == "buildmenu" then
 		return ui.showBuildMenu()
 	end
 	if obj.type == "building" then
-		return ui.showRecruitMenu(obj)
+		ui.showRecruitMenu(obj)
 	end
 end
 
 function uscript.deselectFunctions(obj, menuTable)	-- Runs functions on deselect
 	obj:setSequence("normal")
+	-- print(obj.name .. " dsel")
 	obj.selected = false
+	if obj.type == "building" then
+		ui.hideRecruitMenu()
+		return nil
+	end
 	if obj.name == "buildmenu" then
 		ui.hideBuildMenu(menuTable)
+		return nil
 	end
-	if obj.type == "building" then
-		ui.hideRecruitMenu(menuTable)
-	end
-	return nil
 end
 
 local bufferOutline
 
-function uscript.recruitMenu(event)
-	
+function uscript.recruitMenu(obj)
+	print(obj.name .. " menu")
 end
 
 function uscript.dragNdropMenu(event)	-- Drag and drop build menu functionality
@@ -216,8 +219,6 @@ function uscript.setEventListeners(globalMenuTable)	-- Sets event listeners for 
 	for i, menuObj in pairs(globalMenuTable) do
 		if menuObj ~= nil and menuObj.name ~= "buildshelf" and menuObj.type == "build" then
 			menuObj:addEventListener("touch", uscript.dragNdropMenu)
-		elseif menuObj ~= nil and menuObj.type == "recruit" then
-			menuObj:addEventListener("tap", uscript.recruitMenu)
 		end
 	end
 end

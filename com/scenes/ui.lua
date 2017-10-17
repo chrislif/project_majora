@@ -124,28 +124,21 @@ function ui.hideBuildMenu(menuTable)	-- Hide build menu through destruction
 end
 
 function ui.showRecruitMenu(building)
-	local menuTable = {}
 	local recruitMenu = display.newSprite(spriteTable["recruitmenu"], spriteTable["recruitmenuData"])
 	recruitMenu.x = building.x + building.contentWidth/2
 	recruitMenu.y = building.y - building.contentHeight/2
 	recruitMenu.name = "recruitMenu"
 	recruitMenu.type = "recruit"
+	recruitMenu.parent = building
 	recruitMenu.selected = false
-	menuTable[recruitMenu.name] = recruitMenu
 	
-	return menuTable
+	objectTable["recruitMenu"] = recruitMenu
 end
 
-function ui.hideRecruitMenu(menuTable)
-	if menuTable ~= nil then
-		for i, menu in pairs(menuTable) do
-			if menu ~= nil then
-				menuTable[i] = nil
-				menu:removeSelf()
-			end
-		end
-	end
+function ui.hideRecruitMenu()
+	local recruitMenu = objectTable["recruitMenu"]
 	objectTable["recruitMenu"] = nil
+	recruitMenu:removeSelf()
 end
 
 function ui.updateUI(goldui)	-- Update UI, currently only gold
