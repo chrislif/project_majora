@@ -278,6 +278,44 @@ function sprites:loadSprites() -- Gets all the necessary sprite sheets
 	spriteSheetTable["buildmenu"] = buildmenuSheet
 	spriteSheetTable["buildmenuData"] = buildmenuSequenceData
 		
+		-- Recruit Menu Data
+		----------------------------------------------------------------------------------
+	local recruitmenuOptions = 
+	{
+		frames = 
+		{
+			{ -- 1) recruitmenu normal
+				x = 0,
+				y = 0,
+				width = 75,
+				height = 50
+			},
+			{ -- 2) recruitmenu selected
+				x = 0,
+				y = 50,
+				width = 75,
+				height = 50
+			},
+		},
+	}
+	local recruitmenuSheet = graphics.newImageSheet("assets/rangerguildMenu.png", recruitmenuOptions)
+
+	local recruitmenuSequenceData =
+	{
+		{
+		name = "normal",
+		start = 1,
+		count = 1,
+		},
+		{
+		name = "selected",
+		start = 2,
+		count = 1,
+		},
+	}
+	spriteSheetTable["recruitmenu"] = recruitmenuSheet
+	spriteSheetTable["recruitmenuData"] = recruitmenuSequenceData
+		
 		-- Return Data
 		----------------------------------------------------------------------------------
 	return spriteSheetTable

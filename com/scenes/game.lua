@@ -7,12 +7,14 @@
 local bscript = require "scripts.bscr"
 local uscript = require "scripts.untscr"
 local ui = require "scenes.ui"
+local fogscript = require "scripts.fow"
 local composer = require "composer"
 
 -- Initialize Scene
 gold = 1000
 objectTable = {}
 globalMenuTable = {}
+local fogTable = {}
 local scene = composer.newScene()
 local gameLoopTimer
 local goldui
@@ -21,17 +23,21 @@ local hourCount = 0
 local minCount = 0
 
 -- Create Display Groups
-local backGroup  = display.newGroup()
-local unitGroup  = display.newGroup()
+backGroup  = display.newGroup()
+unitGroup  = display.newGroup()
 buildGroup = display.newGroup()
-local menuGroup = display.newGroup()
+fogGroup = display.newGroup()
+menuGroup = display.newGroup()
 
 -- Load Background
-background = display.newImageRect(backGroup, "assets/background.png", 800, 1400)
-background.x = display.contentCenterX
-background.y = display.contentCenterY
-background.name = "background"
-table.insert(objectTable, background)
+local function loadBackground()
+	background = display.newImageRect(backGroup, "assets/background.png", 800, 1400)
+	background.x = display.contentCenterX
+	background.y = display.contentCenterY
+	background.name = "background"
+	background.type = "background"
+	table.insert(objectTable, background)
+end
 
 local function dayTick()	-- Event on the day change
 	if gold < 9999 then
@@ -89,6 +95,8 @@ local function selectObject(event)	-- Function to select objects
 			if xCheck and yCheck then
 				if obj.name == "buildmenu" then
 					if obj.selected == false then
+						uscript.deselectFunctions(obj, globalMenuTable)
+						deselectObjects(event)
 						globalMenuTable = uscript.selectFunctions(obj)
 						uscript.setEventListeners(globalMenuTable)
 					else
@@ -98,7 +106,11 @@ local function selectObject(event)	-- Function to select objects
 				end
 				if obj.selected == false then
 					deselectObjects(event)
-					uscript.selectFunctions(obj)
+					globalMenuTable = uscript.selectFunctions(obj)
+					for i, menu in pairs(globalMenuTable) do
+						objectTable["recruitMenu"] = menu
+					end
+					uscript.setEventListeners(globalMenuTable)
 					return true
 				end
 			else
@@ -135,15 +147,18 @@ local function dragBackground(event)	-- Move background on drag
 	return true
 end
 
-background:addEventListener("touch", dragBackground)
-
 function scene:create(event)	-- Runs on scene creation but before on screen
-	local castle = uscript.spawnBuilding(display.contentCenterX, display.contentCenterY, 
-										 "castle", buildGroup, 0.5)
-	table.insert(objectTable, castle)
+	-- Load UI
 	local uiTable = ui.loadUI()
 	table.insert(objectTable, uiTable["buildmenu"])
 	goldui = uiTable["goldui"]
+	-- Load Background
+	loadBackground()
+	background:addEventListener("touch", dragBackground)
+	-- Load Castle
+	local castle = uscript.spawnBuilding(display.contentCenterX, display.contentCenterY, 
+										 "castle", buildGroup, 0.5)
+	table.insert(objectTable, castle)
 end
 
 local function gameLoop()	-- Main Game Loop

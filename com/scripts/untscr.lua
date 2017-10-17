@@ -6,6 +6,7 @@
 -- Requires
 local sprites = require "scripts.sprite"
 local ui = require "scenes.ui"
+local fogscript = require "scripts.fow"
 
 local uscript = {}
 
@@ -54,7 +55,7 @@ function uscript.checkBuildCollision(x, y, building)	-- Checks collision before 
 		local buildYMax = y + buildingTable[building]["height"]/2
 		
 		for i, obj in pairs(objectTable) do
-			if obj ~= nil and obj.name ~= "background" and obj.name ~= "buildmenu" then
+			if obj ~= nil and obj.type == "building" then
 				
 				local xMin = obj.x - obj.contentWidth/2 - buildingBuffer
 				local xMax = obj.x + obj.contentWidth/2 + buildingBuffer
@@ -122,7 +123,9 @@ function uscript.spawnBuilding(x, y, building, dgroup, scale)	-- Spawn Building
 	newBuild.x = x
 	newBuild.y = y
 	newBuild.name = building
+	newBuild.los = newBuild.contentWidth * 1.5
 	newBuild.selected = false
+	newBuild.type = "building"
 	gold = gold - costTable[building]
 	return newBuild
 end
@@ -135,24 +138,32 @@ end
 
 function uscript.selectFunctions(obj)	-- Checks and runs function on selection
 	obj:setSequence("selected")
-	obj.selected = true	
-	ui.selectUI(obj)
+	obj.selected = true
 	if obj.name == "buildmenu" then
 		return ui.showBuildMenu()
+	end
+	if obj.type == "building" then
+		return ui.showRecruitMenu(obj)
 	end
 end
 
 function uscript.deselectFunctions(obj, menuTable)	-- Runs functions on deselect
 	obj:setSequence("normal")
 	obj.selected = false
-	ui.deselectUI()
 	if obj.name == "buildmenu" then
 		ui.hideBuildMenu(menuTable)
+	end
+	if obj.type == "building" then
+		ui.hideRecruitMenu(menuTable)
 	end
 	return nil
 end
 
 local bufferOutline
+
+function uscript.recruitMenu(event)
+	
+end
 
 function uscript.dragNdropMenu(event)	-- Drag and drop build menu functionality
 	local menuTarget = event.target
@@ -201,10 +212,12 @@ function uscript.dragNdropMenu(event)	-- Drag and drop build menu functionality
 	return true
 end
 
-function uscript.setEventListeners(globalMenuTable)	-- Sets event listeners for drag and drop menu
+function uscript.setEventListeners(globalMenuTable)	-- Sets event listeners for menus
 	for i, menuObj in pairs(globalMenuTable) do
-		if menuObj ~= nil and menuObj.name ~= "buildshelf" then
+		if menuObj ~= nil and menuObj.name ~= "buildshelf" and menuObj.type == "build" then
 			menuObj:addEventListener("touch", uscript.dragNdropMenu)
+		elseif menuObj ~= nil and menuObj.type == "recruit" then
+			menuObj:addEventListener("tap", uscript.recruitMenu)
 		end
 	end
 end

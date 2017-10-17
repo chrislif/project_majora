@@ -19,17 +19,13 @@ function ui.loadUI()	-- Load UI, usually on load
 	goldui = display.newImageRect("assets/goldui.png", 15, 15)
 	goldui.x = display.contentWidth - (goldui.contentWidth * 3) - 10
 	goldui.y = goldui.contentHeight - 20
-
-	selectui = display.newSprite(spriteTable["selectui"], spriteTable["selectuiData"])
-	selectui.xScale = .5
-	selectui.yScale = .5
-	selectui.x = selectui.contentWidth/2 + 10
-	selectui.y = selectui.contentHeight/2 - 20
+	goldui.type = "ui"
 	
 	goldtext = display.newText({text = tostring(gold)})
 	goldtext.x = display.contentWidth - (goldui.contentWidth) - 10
 	goldtext.y = goldui.contentHeight - 20
 	goldtext.align = "center"
+	goldtext.type = "ui"
 	
 	menuTable["goldui"] = goldtext
 	
@@ -40,6 +36,7 @@ function ui.loadUI()	-- Load UI, usually on load
 	buildui.y = display.contentHeight
 	buildui.selected = false
 	buildui.name = "buildmenu"
+	buildui.type = "build"
 	
 	menuTable["buildmenu"] = buildui
 	
@@ -50,11 +47,12 @@ function ui.showBuildMenu()	-- Load build menu
 	local menuTable = {}
 	
 	-- Menu Shelf
-	local menushelf = display.newImageRect("assets/buildmenushelf.png", 275, 40)
-	menushelf.x = menushelf.contentWidth/2 + 35
-	menushelf.y = display.contentHeight
-	menushelf.name = "buildshelf"
-	menuTable["menushelf"] = menushelf
+	local buildshelf = display.newImageRect("assets/buildmenushelf.png", 275, 40)
+	buildshelf.x = buildshelf.contentWidth/2 + 35
+	buildshelf.y = display.contentHeight
+	buildshelf.name = "buildshelf"
+	buildshelf.type = "build"
+	menuTable[buildshelf.name] = buildshelf
 	
 	-- Barracks
 	local buildbarracks = display.newSprite(spriteTable["barracks"], spriteTable["barracksData"])
@@ -65,7 +63,8 @@ function ui.showBuildMenu()	-- Load build menu
 	buildbarracks.selected = false
 	buildbarracks.name = "buildbarracks"
 	buildbarracks.building = "barracks"
-	menuTable["buildbarracks"] = buildbarracks
+	buildbarracks.type = "build"
+	menuTable[buildbarracks.name] = buildbarracks
 	
 	-- Ranger Guild
 	local buildrangerguild = display.newSprite(spriteTable["rangerguild"], spriteTable["rangerguildData"])
@@ -76,7 +75,8 @@ function ui.showBuildMenu()	-- Load build menu
 	buildrangerguild.selected = false
 	buildrangerguild.name = "buildrangerguild"
 	buildrangerguild.building = "rangerguild"
-	menuTable["buildrangerguild"] = buildrangerguild
+	buildrangerguild.type = "build"
+	menuTable[buildrangerguild.name] = buildrangerguild
 	
 	-- Rogue Guild
 	local buildrogueguild = display.newSprite(spriteTable["rogueguild"], spriteTable["rogueguildData"])
@@ -87,7 +87,8 @@ function ui.showBuildMenu()	-- Load build menu
 	buildrogueguild.selected = false
 	buildrogueguild.name = "buildrogueguild"
 	buildrogueguild.building = "rogueguild"
-	menuTable["buildrogueguild"] = buildrogueguild
+	buildrogueguild.type = "build"
+	menuTable[buildrogueguild.name] = buildrogueguild
 	
 	-- Wizard Guild
 	local buildwizzyguild = display.newSprite(spriteTable["wizzyguild"], spriteTable["wizzyguildData"])
@@ -98,7 +99,9 @@ function ui.showBuildMenu()	-- Load build menu
 	buildwizzyguild.selected = false
 	buildwizzyguild.name = "buildwizzyguild"
 	buildwizzyguild.building = "wizzyguild"
-	menuTable["buildwizzyguild"] = buildwizzyguild
+	buildwizzyguild.type = "build"
+	menuTable[buildwizzyguild.name] = buildwizzyguild
+	
 	return menuTable
 end
 
@@ -109,22 +112,40 @@ function ui.getBuildOutline(building)	-- Get buildoutline for drag and drop menu
 	return outline
 end
 
-function ui.selectUI(obj)
-	selectui:setSequence(obj.name .. "Selected")
-end
-
-function ui.deselectUI()
-	selectui:setSequence("normal")
-end
-
 function ui.hideBuildMenu(menuTable)	-- Hide build menu through destruction
 	if menuTable ~= nil then
 		for i, menu in pairs(menuTable) do
 			if menu ~= nil then
+				menuTable[i] = nil
 				menu:removeSelf()
 			end
 		end
 	end
+end
+
+function ui.showRecruitMenu(building)
+	local menuTable = {}
+	local recruitMenu = display.newSprite(spriteTable["recruitmenu"], spriteTable["recruitmenuData"])
+	recruitMenu.x = building.x + building.contentWidth/2
+	recruitMenu.y = building.y - building.contentHeight/2
+	recruitMenu.name = "recruitMenu"
+	recruitMenu.type = "recruit"
+	recruitMenu.selected = false
+	menuTable[recruitMenu.name] = recruitMenu
+	
+	return menuTable
+end
+
+function ui.hideRecruitMenu(menuTable)
+	if menuTable ~= nil then
+		for i, menu in pairs(menuTable) do
+			if menu ~= nil then
+				menuTable[i] = nil
+				menu:removeSelf()
+			end
+		end
+	end
+	objectTable["recruitMenu"] = nil
 end
 
 function ui.updateUI(goldui)	-- Update UI, currently only gold
