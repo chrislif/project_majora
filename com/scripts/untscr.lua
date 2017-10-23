@@ -14,13 +14,26 @@ local uscript = {}
 local spriteTable = sprites.loadSprites()
 local buildingBuffer = 30 -- The minimum distance for how close buildings are allowed to be
 
--- Table for cost of buildings
+-- Table for cost of objects
 local costTable = {}
+-- Buildings
 costTable["castle"] = 0
 costTable["barracks"] = 200
 costTable["rangerguild"] = 150
 costTable["rogueguild"] = 250
 costTable["wizzyguild"] = 300
+-- Units
+costTable["warrior"] = 50
+costTable["ranger"] = 30
+costTable["rogue"] = 40
+costTable["wizard"] = 60
+
+-- Table for assigning building to unit
+local recruitTable = {}
+recruitTable["barracks"] = "warrior"
+recruitTable["rangerguild"] = "ranger"
+recruitTable["rogueguild"] = "rogue"
+recruitTable["wizzyguild"] = "wizard"
 
 -- Table for building collision stats
 local buildingTable = {}
@@ -131,9 +144,19 @@ function uscript.spawnBuilding(x, y, building, dgroup, scale)	-- Spawn Building
 end
 
 function uscript.spawnUnit(x, y, unit, dgroup)	-- Spawn Unit
+	if costTable[unit] > gold then
+		print("not enough gold to recruit " .. unit)
+		return
+	end
 	local newUnit = display.newImageRect(dgroup, "assets/" .. unit .. ".png", 32, 32)
 	newUnit.x = x
 	newUnit.y = y
+	newUnit.name = unit
+	newUnit.los = newUnit.contentWidth * 1.5
+	newUnit.selected = false
+	newUnit.type = "unit"
+	gold = gold - costTable[unit]
+	return newUnit
 end
 
 function uscript.selectFunctions(obj)	-- Checks and runs function on selection
@@ -165,7 +188,9 @@ end
 local bufferOutline
 
 function uscript.recruitMenu(obj)
-	print(obj.name .. " menu")
+	unit = recruitTable[obj.name]
+	newUnit = uscript.spawnUnit(obj.x, obj.y + obj.contentHeight, unit, unitGroup)
+	table.insert(objectTable, newUnit)
 end
 
 function uscript.dragNdropMenu(event)	-- Drag and drop build menu functionality

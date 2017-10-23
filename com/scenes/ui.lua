@@ -124,6 +124,7 @@ function ui.hideBuildMenu(menuTable)	-- Hide build menu through destruction
 end
 
 function ui.showRecruitMenu(building)
+	if building.name == "castle" then return end
 	local recruitMenu = display.newSprite(spriteTable["recruitmenu"], spriteTable["recruitmenuData"])
 	recruitMenu.x = building.x + building.contentWidth/2
 	recruitMenu.y = building.y - building.contentHeight/2
@@ -136,6 +137,7 @@ function ui.showRecruitMenu(building)
 end
 
 function ui.hideRecruitMenu()
+	if objectTable["recruitMenu"] == nil then return end
 	local recruitMenu = objectTable["recruitMenu"]
 	objectTable["recruitMenu"] = nil
 	recruitMenu:removeSelf()

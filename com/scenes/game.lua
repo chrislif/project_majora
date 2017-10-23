@@ -126,8 +126,8 @@ local function selectObject(event)	-- Function to select objects
 					deselectObjects(event)
 					globalMenuTable = uscript.selectFunctions(obj)
 					return true
-				elseif obj.selected == true then
-					if checkMenu(event) then
+				elseif obj.selected == true then		-- If object was selected
+					if checkMenu(event) then			-- Check if menu was pressed
 						uscript.recruitMenu(obj)
 					end
 				end
