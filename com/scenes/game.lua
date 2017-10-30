@@ -4,7 +4,7 @@
 -- main game 
 -----------------------------------------------------------------------------------------
 -- Requires
-local bscript = require "scripts.bscr"
+local aiscript = require "scripts.aiscr"
 local uscript = require "scripts.untscr"
 local ui = require "scenes.ui"
 local fogscript = require "scripts.fow"
@@ -13,6 +13,7 @@ local composer = require "composer"
 -- Initialize Scene
 gold = 1000
 objectTable = {}
+unitTable = {}
 globalMenuTable = {}
 local fogTable = {}
 local scene = composer.newScene()
@@ -36,7 +37,7 @@ local function loadBackground()
 	background.y = display.contentCenterY
 	background.name = "background"
 	background.type = "background"
-	table.insert(objectTable, background)
+	objectTable["background"] = background
 end
 
 local function dayTick()	-- Event on the day change
@@ -170,6 +171,8 @@ local function dragBackground(event)	-- Move background on drag
 end
 
 function scene:create(event)	-- Runs on scene creation but before on screen
+	-- Seed Random
+	math.randomseed(os.time())
 	-- Load UI
 	local uiTable = ui.loadUI()
 	table.insert(objectTable, uiTable["buildmenu"])
@@ -194,8 +197,8 @@ local function gameLoop()	-- Main Game Loop
 		dayCount = dayCount + 1
 		dayTick()
 	end
-	-- print("day: " .. dayCount .. " hour: " .. hourCount .. " min: " .. minCount)
 	ui.updateUI(goldui)
+	aiscript.checkUnits()
 end
 
 function scene:show(event)	-- Runs when scene is on screen

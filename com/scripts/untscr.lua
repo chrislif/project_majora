@@ -155,6 +155,10 @@ function uscript.spawnUnit(x, y, unit, dgroup)	-- Spawn Unit
 	newUnit.los = newUnit.contentWidth * 1.5
 	newUnit.selected = false
 	newUnit.type = "unit"
+	newUnit.working = false
+	newUnit.state = "idle"
+	newUnit.destX = x
+	newUnit.destY = y
 	gold = gold - costTable[unit]
 	return newUnit
 end
@@ -191,6 +195,7 @@ function uscript.recruitMenu(obj)
 	unit = recruitTable[obj.name]
 	newUnit = uscript.spawnUnit(obj.x, obj.y + obj.contentHeight, unit, unitGroup)
 	table.insert(objectTable, newUnit)
+	table.insert(unitTable, newUnit)
 end
 
 function uscript.dragNdropMenu(event)	-- Drag and drop build menu functionality
